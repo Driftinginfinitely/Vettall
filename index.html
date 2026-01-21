@@ -161,8 +161,6 @@
         const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
         // Set colors based on mode
-        // Dark Mode: Dark Canvas, White Ink
-        // Light Mode: White Canvas, Black Ink
         const BG_COLOR = isDarkMode ? "#1e1e1e" : "#ffffff";
         const INK_COLOR = isDarkMode ? "#ffffff" : "#000000";
 
@@ -212,7 +210,7 @@
             ctx.fillStyle = INK_COLOR;
             ctx.lineWidth = 4;
 
-            // Ring
+            // Ring (RADIUS 150)
             ctx.beginPath(); ctx.arc(cx, cy, 150, 0, Math.PI*2); ctx.stroke();
 
             // Spine
@@ -221,20 +219,39 @@
             ctx.lineTo(cx-10, 280); ctx.moveTo(cx, 300); ctx.lineTo(cx+10, 280); 
             ctx.stroke();
 
-            // Letters
-            ctx.font = "60px 'Cinzel Decorative', serif";
+            // --- AUTO-CENTERING LOGIC ---
+            // Calculate how many lines we need to draw
+            const isOdd = letters.length % 2 !== 0;
+            const numLines = isOdd ? 1 + (letters.length - 1)/2 : letters.length/2;
+            
+            // Safe settings to ensure fit
+            const lineHeight = 60;
+            const fontSize = "48px"; 
+            const xSpread = 40; // Distance from spine (Reduced from 50 to avoid edges)
+            
+            // Calculate starting Y position to center the whole block vertically
+            const totalTextHeight = (numLines - 1) * lineHeight;
+            let yPos = cy - (totalTextHeight / 2); // Start at the vertical center - half height
+
+            ctx.font = fontSize + " 'Cinzel Decorative', serif";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
             
-            let yPos = 80; let idx = 0;
-            if (letters.length % 2 !== 0) { ctx.fillText(letters[idx], cx, yPos); idx++; yPos += 70; }
+            let idx = 0;
+            if (isOdd) {
+                // Draw single top letter centered
+                ctx.fillText(letters[idx], cx, yPos);
+                idx++;
+                yPos += lineHeight;
+            }
 
             while(idx < letters.length) {
-                if(letters[idx]) ctx.fillText(letters[idx], cx - 50, yPos);
+                // Draw pairs (Left and Right)
+                if(letters[idx]) ctx.fillText(letters[idx], cx - xSpread, yPos);
                 idx++;
-                if(letters[idx]) ctx.fillText(letters[idx], cx + 50, yPos);
+                if(letters[idx]) ctx.fillText(letters[idx], cx + xSpread, yPos);
                 idx++;
-                yPos += 70;
+                yPos += lineHeight;
             }
         }
 
@@ -247,24 +264,25 @@
             ctx.fillStyle = BG_COLOR;
             ctx.fillRect(0, 0, w, h);
             
-            // 2. Draw Strong Outer Circle
+            // 2. Draw Strong Outer Circle (RADIUS 150 - MATCHED)
             ctx.strokeStyle = INK_COLOR;  
-            ctx.lineWidth = 4;            // Strong line width (same as Crest)
+            ctx.lineWidth = 4;            
             ctx.beginPath(); 
-            ctx.arc(cx,cy,140,0,Math.PI*2); 
+            ctx.arc(cx,cy,150,0,Math.PI*2); 
             ctx.stroke();
 
             const points = [];
             letters.forEach(char => {
                 const code = char.charCodeAt(0)-65;
                 const angle = (code/26)*(Math.PI*2)-(Math.PI/2);
-                points.push({x:cx+Math.cos(angle)*120, y:cy+Math.sin(angle)*120});
+                // Radius bumped to 130 to fill the 150 ring better
+                points.push({x:cx+Math.cos(angle)*130, y:cy+Math.sin(angle)*130});
             });
 
             if(points.length>0) {
                 // Draw Inner Lines
                 ctx.fillStyle = INK_COLOR;
-                ctx.lineWidth = 2; // Slightly thinner for the connecting lines
+                ctx.lineWidth = 2; 
                 
                 ctx.beginPath();
                 ctx.moveTo(points[0].x, points[0].y);
