@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sigil Generator</title>
+    <!-- GOTHIC FONT IMPORT -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* BASE STYLES */
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 30px;
+        }
+
+        h1 {
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: 32px;
+            margin-bottom: 20px;
+            margin-top: 0;
+            color: #222;
+        }
+
+        /* WIDE, COMPACT INTRO BOX */
+        .intro-text {
+            width: 100%;
+            max-width: 1000px;
+            background: #fff;
+            padding: 25px 30px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+            color: #555;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Two-Column Layout */
+        .intro-content {
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+        }
+        .intro-left { flex: 1; border-right: 1px solid #eee; padding-right: 20px; }
+        .intro-right { flex: 1.2; }
+
+        @media (max-width: 700px) {
+            .intro-content { flex-direction: column; gap: 20px; }
+            .intro-left { border-right: none; padding-right: 0; border-bottom: 1px solid #eee; padding-bottom: 20px; }
+        }
+
+        .intro-text h3 { margin-top: 0; margin-bottom: 10px; color: #222; font-family: 'Cinzel Decorative', cursive; font-size: 18px; }
+        .intro-text p { margin-bottom: 0; font-size: 15px; }
+        ul { margin: 0; padding-left: 20px; }
+        li { margin-bottom: 6px; font-size: 15px; }
+
+        /* INPUT AREA */
+        .input-group { margin-bottom: 40px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+        input {
+            padding: 14px; font-size: 18px; border: 2px solid #333; text-align: center; 
+            text-transform: uppercase; width: 350px; font-family: 'Cinzel Decorative', cursive; 
+            border-radius: 4px; outline: none;
+        }
+        input:focus { border-color: #555; }
+        
+        button {
+            padding: 14px 30px; background: #222; color: #fff; border: none; cursor: pointer; 
+            font-weight: bold; border-radius: 4px; letter-spacing: 1px; transition: background 0.2s;
+        }
+        button:hover { background: #444; }
+
+        /* OUTPUT PANELS */
+        .display-area { display: flex; gap: 40px; flex-wrap: wrap; justify-content: center; width: 100%; }
+        .panel { text-align: center; }
+        .panel h2 { font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 15px; }
+        
+        canvas {
+            background: #fff;
+            border-radius: 4px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Sigil Generator</h1>
+
+    <div class="intro-text">
+        <div class="intro-content">
+            <div class="intro-left">
+                <h3>What is a Sigil?</h3>
+                <p>
+                    A sigil is a symbol created to bypass the conscious mind and plant an intention deep in the subconscious. 
+                    By turning a written intention (for example: "I HAVE STRENGTH") into an abstract glyph, you remove the language of doubt.
+                </p>
+            </div>
+            <div class="intro-right">
+                <h3>How to use:</h3>
+                <ul>
+                    <li><strong>Enter intention</strong> below (keep it positive).</li>
+                    <li>The generator removes vowels and repeated letters.</li>
+                    <li>It creates a <strong>Crest</strong> (Left) and <strong>Star Path</strong> (Right).</li>
+                    <li><strong>Save the one that resonates with you.</strong></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="input-group">
+        <input type="text" id="intention" placeholder="I HAVE STRENGTH">
+        <button id="forgeBtn">FORGE</button>
+    </div>
+
+    <div class="display-area">
+        <div class="panel">
+            <h2>The Crest Seal</h2>
+            <canvas id="crestCanvas" width="350" height="350"></canvas>
+        </div>
+        <div class="panel">
+            <h2>The Star Path</h2>
+            <canvas id="wheelCanvas" width="350" height="350"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // WAIT FOR LOAD
+        window.addEventListener('load', function() {
+            
+            // CLICK LISTENER
+            document.getElementById("forgeBtn").addEventListener("click", generate);
+
+            // ENTER KEY LISTENER
+            document.getElementById("intention").addEventListener("keypress", function(event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    generate();
+                }
+            });
+        });
+
+        function generate() {
+            const inputField = document.getElementById('intention');
+            if(!inputField.value) {
+                alert("Please enter an intention first.");
+                return;
+            }
+
+            const input = inputField.value.toUpperCase();
+            const vowels = ['A','E','I','O','U',' '];
+            
+            // Filter Letters
+            let uniqueLetters = [...new Set(input.split('').filter(c => !vowels.includes(c) && /[A-Z]/.test(c)))];
+            
+            if(uniqueLetters.length === 0) { 
+                alert("No valid letters found. Try a longer phrase."); 
+                return; 
+            }
+
+            drawCrest(uniqueLetters);
+            drawWheel(uniqueLetters);
+        }
+
+        // STYLE 1: CREST
+        function drawCrest(letters) {
+            const canvas = document.getElementById('crestCanvas');
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width; const h = canvas.height; const cx = w/2; const cy = h/2;
+
+            ctx.clearRect(0,0,w,h);
+
+            // Ring
+            ctx.strokeStyle = "#111"; ctx.lineWidth = 4; ctx.beginPath();
+            ctx.arc(cx, cy, 150, 0, Math.PI*2); ctx.stroke();
+
+            // Spine
+            ctx.lineWidth = 3; ctx.beginPath();
+            ctx.moveTo(cx, 50); ctx.lineTo(cx, 300); 
+            ctx.lineTo(cx-10, 280); ctx.moveTo(cx, 300); ctx.lineTo(cx+10, 280); 
+            ctx.stroke();
+
+            // Letters
+            ctx.fillStyle = "#111";
+            ctx.font = "60px 'Cinzel Decorative', 'Times New Roman', serif";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            
+            let yPos = 80; 
+            let idx = 0;
+
+            if (letters.length % 2 !== 0) {
+                ctx.fillText(letters[idx], cx, yPos);
+                idx++;
+                yPos += 70;
+            }
+
+            while(idx < letters.length) {
+                if(letters[idx]) ctx.fillText(letters[idx], cx - 50, yPos);
+                idx++;
+                if(letters[idx]) ctx.fillText(letters[idx], cx + 50, yPos);
+                idx++;
+                yPos += 70;
+            }
+        }
+
+        // STYLE 2: STAR
+        function drawWheel(letters) {
+            const canvas = document.getElementById('wheelCanvas');
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width; const h = canvas.height; const cx = w/2; const cy = h/2;
+            
+            ctx.clearRect(0,0,w,h);
+            
+            ctx.strokeStyle="#e0e0e0"; ctx.lineWidth=1; ctx.beginPath(); ctx.arc(cx,cy,140,0,Math.PI*2); ctx.stroke();
+
+            const points = [];
+            letters.forEach(char => {
+                const code = char.charCodeAt(0)-65;
+                const angle = (code/26)*(Math.PI*2)-(Math.PI/2);
+                points.push({x:cx+Math.cos(angle)*120, y:cy+Math.sin(angle)*120});
+            });
+
+            if(points.length>0) {
+                // Lines
+                ctx.strokeStyle="#222"; ctx.lineWidth=2; ctx.beginPath();
+                ctx.moveTo(points[0].x, points[0].y);
+                for(let i=1; i<points.length; i++) ctx.lineTo(points[i].x, points[i].y);
+                ctx.stroke();
+                
+                // Markers
+                ctx.fillStyle="#fff"; ctx.fill(); ctx.beginPath(); ctx.arc(points[0].x,points[0].y,5,0,Math.PI*2); ctx.stroke();
+            }
+        }
+    </script>
+</body>
+</html>
