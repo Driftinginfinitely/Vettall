@@ -89,6 +89,32 @@
             box-shadow: 0 5px 20px rgba(0,0,0,0.08);
             border: 1px solid #eee;
         }
+
+                /* DARK MODE SUPPORT FOR CANVAS */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #121212; /* Dark background for page */
+                color: #e0e0e0;            /* Light text */
+            }
+            .intro-text {
+                background: #1e1e1e;       /* Dark box background */
+                border-color: #333;
+                color: #ccc;
+            }
+            .intro-text h3 {
+                color: #fff;
+            }
+            input {
+                background: #1e1e1e;
+                color: #fff;
+                border-color: #555;
+            }
+            /* This magically inverts the canvas colors */
+            canvas {
+                filter: invert(1) hue-rotate(180deg);
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -243,3 +269,4 @@
     </script>
 </body>
 </html>
+
