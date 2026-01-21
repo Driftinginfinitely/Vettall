@@ -131,7 +131,8 @@
             <div class="intro-right">
                 <h3>How to use:</h3>
                 <ul>
-                    <li><strong>Enter intention</strong> below (keep it positive).</li>
+                    <!-- UPDATED TEXT HERE -->
+                    <li><strong>Enter intention</strong> below (max 60 characters).</li>
                     <li>The generator removes vowels and repeated letters.</li>
                     <li>It creates a <strong>Crest</strong> (Left) and <strong>Star Path</strong> (Right).</li>
                     <li><strong>Save the one that resonates with you.</strong></li>
@@ -141,7 +142,7 @@
     </div>
 
     <div class="input-group">
-        <input type="text" id="intention" placeholder="I HAVE STRENGTH">
+        <input type="text" id="intention" placeholder="I HAVE STRENGTH" maxlength="60">
         <button id="forgeBtn">FORGE</button>
     </div>
 
@@ -157,15 +158,11 @@
     </div>
 
     <script>
-        // Check for Dark Mode Preference
         const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-        // Set colors based on mode
         const BG_COLOR = isDarkMode ? "#1e1e1e" : "#ffffff";
         const INK_COLOR = isDarkMode ? "#ffffff" : "#000000";
 
         window.addEventListener('load', async function() {
-            // Wait for fonts to ensure text draws correctly
             try { await document.fonts.ready; } catch(e) {}
 
             document.getElementById("forgeBtn").addEventListener("click", generate);
@@ -176,7 +173,6 @@
                 }
             });
 
-            // Auto-reload if user switches dark/light mode while page is open
             window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
                 location.reload(); 
             });
@@ -196,21 +192,20 @@
             drawWheel(uniqueLetters);
         }
 
+        // --- CREST WITH SMART SCALING (No Overflow) ---
         function drawCrest(letters) {
             const canvas = document.getElementById('crestCanvas');
             const ctx = canvas.getContext('2d');
             const w = canvas.width; const h = canvas.height; const cx = w/2; const cy = h/2;
 
-            // 1. Paint Solid Background
             ctx.fillStyle = BG_COLOR;
             ctx.fillRect(0, 0, w, h);
 
-            // 2. Set Ink Style
             ctx.strokeStyle = INK_COLOR;
             ctx.fillStyle = INK_COLOR;
             ctx.lineWidth = 4;
 
-            // Ring (RADIUS 150)
+            // Ring (Radius 150)
             ctx.beginPath(); ctx.arc(cx, cy, 150, 0, Math.PI*2); ctx.stroke();
 
             // Spine
@@ -219,52 +214,57 @@
             ctx.lineTo(cx-10, 280); ctx.moveTo(cx, 300); ctx.lineTo(cx+10, 280); 
             ctx.stroke();
 
-            // --- AUTO-CENTERING LOGIC ---
-            // Calculate how many lines we need to draw
+            // Scaling Logic
             const isOdd = letters.length % 2 !== 0;
             const numLines = isOdd ? 1 + (letters.length - 1)/2 : letters.length/2;
             
-            // Safe settings to ensure fit
-            const lineHeight = 60;
-            const fontSize = "48px"; 
-            const xSpread = 40; // Distance from spine (Reduced from 50 to avoid edges)
+            const maxSafeHeight = 220; 
+            const baseLineHeight = 60;
+            const baseFontSize = 48;
             
-            // Calculate starting Y position to center the whole block vertically
-            const totalTextHeight = (numLines - 1) * lineHeight;
-            let yPos = cy - (totalTextHeight / 2); // Start at the vertical center - half height
+            const neededHeight = numLines * baseLineHeight;
+            let scaleFactor = 1;
+            
+            if (neededHeight > maxSafeHeight) {
+                scaleFactor = maxSafeHeight / neededHeight;
+            }
 
-            ctx.font = fontSize + " 'Cinzel Decorative', serif";
+            const finalFontSize = Math.floor(baseFontSize * scaleFactor);
+            const finalLineHeight = baseLineHeight * scaleFactor;
+            const finalSpread = 40 * scaleFactor;
+
+            const totalTextHeight = (numLines - 1) * finalLineHeight;
+            let yPos = cy - (totalTextHeight / 2);
+
+            ctx.font = finalFontSize + "px 'Cinzel Decorative', serif";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
             
             let idx = 0;
             if (isOdd) {
-                // Draw single top letter centered
                 ctx.fillText(letters[idx], cx, yPos);
                 idx++;
-                yPos += lineHeight;
+                yPos += finalLineHeight;
             }
 
             while(idx < letters.length) {
-                // Draw pairs (Left and Right)
-                if(letters[idx]) ctx.fillText(letters[idx], cx - xSpread, yPos);
+                if(letters[idx]) ctx.fillText(letters[idx], cx - finalSpread, yPos);
                 idx++;
-                if(letters[idx]) ctx.fillText(letters[idx], cx + xSpread, yPos);
+                if(letters[idx]) ctx.fillText(letters[idx], cx + finalSpread, yPos);
                 idx++;
-                yPos += lineHeight;
+                yPos += finalLineHeight;
             }
         }
 
+        // --- STAR PATH (Thick Circle 150) ---
         function drawWheel(letters) {
             const canvas = document.getElementById('wheelCanvas');
             const ctx = canvas.getContext('2d');
             const w = canvas.width; const h = canvas.height; const cx = w/2; const cy = h/2;
             
-            // 1. Paint Solid Background
             ctx.fillStyle = BG_COLOR;
             ctx.fillRect(0, 0, w, h);
             
-            // 2. Draw Strong Outer Circle (RADIUS 150 - MATCHED)
             ctx.strokeStyle = INK_COLOR;  
             ctx.lineWidth = 4;            
             ctx.beginPath(); 
@@ -275,12 +275,11 @@
             letters.forEach(char => {
                 const code = char.charCodeAt(0)-65;
                 const angle = (code/26)*(Math.PI*2)-(Math.PI/2);
-                // Radius bumped to 130 to fill the 150 ring better
+                // Radius 130 fits perfectly inside 150
                 points.push({x:cx+Math.cos(angle)*130, y:cy+Math.sin(angle)*130});
             });
 
             if(points.length>0) {
-                // Draw Inner Lines
                 ctx.fillStyle = INK_COLOR;
                 ctx.lineWidth = 2; 
                 
@@ -289,7 +288,6 @@
                 for(let i=1; i<points.length; i++) ctx.lineTo(points[i].x, points[i].y);
                 ctx.stroke();
                 
-                // Draw Dots
                 for(let i=0; i<points.length; i++) {
                     ctx.beginPath(); ctx.arc(points[i].x, points[i].y, 5, 0, Math.PI*2); ctx.fill();
                 }
