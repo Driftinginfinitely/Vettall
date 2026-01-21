@@ -8,9 +8,32 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
     <style>
         /* BASE STYLES */
+        :root {
+            --bg-color: #f9f9f9;
+            --text-color: #333;
+            --panel-bg: #fff;
+            --input-bg: #fff;
+            --border-color: #ddd;
+            --accent-color: #222;
+            --canvas-shadow: rgba(0,0,0,0.08);
+        }
+
+        /* DARK MODE VARIABLES */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #121212;
+                --text-color: #e0e0e0;
+                --panel-bg: #1e1e1e;
+                --input-bg: #1e1e1e;
+                --border-color: #333;
+                --accent-color: #e0e0e0;
+                --canvas-shadow: rgba(0,0,0,0.5);
+            }
+        }
+
         body {
-            background-color: #f9f9f9;
-            color: #333;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             display: flex;
             flex-direction: column;
@@ -18,7 +41,6 @@
             min-height: 100vh;
             margin: 0;
             padding: 30px;
-            transition: background-color 0.3s, color 0.3s;
         }
 
         h1 {
@@ -26,105 +48,70 @@
             font-size: 32px;
             margin-bottom: 20px;
             margin-top: 0;
-            color: #222;
+            color: var(--text-color);
         }
 
-        /* WIDE, COMPACT INTRO BOX */
         .intro-text {
             width: 100%;
             max-width: 1000px;
-            background: #fff;
+            background: var(--panel-bg);
             padding: 25px 30px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             margin-bottom: 30px;
             line-height: 1.5;
-            color: #555;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+            color: var(--text-color);
+            box-shadow: 0 2px 5px var(--canvas-shadow);
             display: flex;
             flex-direction: column;
         }
         
-        /* Two-Column Layout */
         .intro-content {
             display: flex;
             gap: 40px;
             align-items: flex-start;
         }
-        .intro-left { flex: 1; border-right: 1px solid #eee; padding-right: 20px; }
+        .intro-left { flex: 1; border-right: 1px solid var(--border-color); padding-right: 20px; }
         .intro-right { flex: 1.2; }
 
         @media (max-width: 700px) {
             .intro-content { flex-direction: column; gap: 20px; }
-            .intro-left { border-right: none; padding-right: 0; border-bottom: 1px solid #eee; padding-bottom: 20px; }
+            .intro-left { border-right: none; padding-right: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 20px; }
         }
 
-        .intro-text h3 { margin-top: 0; margin-bottom: 10px; color: #222; font-family: 'Cinzel Decorative', cursive; font-size: 18px; }
-        .intro-text p { margin-bottom: 0; font-size: 15px; }
+        .intro-text h3 { margin-top: 0; margin-bottom: 10px; color: var(--text-color); font-family: 'Cinzel Decorative', cursive; font-size: 18px; }
+        .intro-text p { margin-bottom: 0; font-size: 15px; opacity: 0.9; }
         ul { margin: 0; padding-left: 20px; }
         li { margin-bottom: 6px; font-size: 15px; }
 
-        /* INPUT AREA */
         .input-group { margin-bottom: 40px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
         input {
-            padding: 14px; font-size: 18px; border: 2px solid #333; text-align: center; 
+            padding: 14px; font-size: 18px; 
+            border: 2px solid var(--text-color); 
+            text-align: center; 
             text-transform: uppercase; width: 350px; font-family: 'Cinzel Decorative', cursive; 
             border-radius: 4px; outline: none;
-            background-color: #fff; color: #333;
+            background-color: var(--input-bg);
+            color: var(--text-color);
         }
-        input:focus { border-color: #555; }
         
         button {
-            padding: 14px 30px; background: #222; color: #fff; border: none; cursor: pointer; 
-            font-weight: bold; border-radius: 4px; letter-spacing: 1px; transition: background 0.2s;
+            padding: 14px 30px; 
+            background: var(--text-color); 
+            color: var(--bg-color); 
+            border: none; cursor: pointer; 
+            font-weight: bold; border-radius: 4px; letter-spacing: 1px; transition: opacity 0.2s;
         }
-        button:hover { background: #444; }
+        button:hover { opacity: 0.8; }
 
-        /* OUTPUT PANELS */
         .display-area { display: flex; gap: 40px; flex-wrap: wrap; justify-content: center; width: 100%; }
         .panel { text-align: center; }
-        .panel h2 { font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 15px; }
+        .panel h2 { font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: var(--text-color); margin-bottom: 15px; opacity: 0.7; }
         
         canvas {
-            background-color: #ffffff; /* Default White */
             border-radius: 4px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-            border: 1px solid #eee;
-        }
-
-        /* --- DARK MODE FIXES --- */
-        @media (prefers-color-scheme: dark) {
-            body {
-                background-color: #121212;
-                color: #e0e0e0;
-            }
-            h1 { color: #fff; }
-            
-            .intro-text {
-                background: #1e1e1e;
-                border-color: #333;
-                color: #ccc;
-            }
-            .intro-text h3 { color: #fff; }
-            .intro-left { border-right-color: #333; }
-            .intro-left { border-bottom-color: #333; }
-
-            input {
-                background: #1e1e1e;
-                color: #fff;
-                border-color: #555;
-            }
-            button {
-                background: #e0e0e0;
-                color: #121212;
-            }
-            button:hover { background: #fff; }
-
-            /* Invert the canvas so White Background -> Black, Black Ink -> White */
-            canvas {
-                filter: invert(1);
-                border-color: #333;
-            }
+            box-shadow: 0 5px 20px var(--canvas-shadow);
+            border: 1px solid var(--border-color);
         }
     </style>
 </head>
@@ -170,56 +157,62 @@
     </div>
 
     <script>
-        // WAIT FOR LOAD
-        window.addEventListener('load', function() {
-            
-            // CLICK LISTENER
-            document.getElementById("forgeBtn").addEventListener("click", generate);
+        // Check for Dark Mode Preference
+        const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-            // ENTER KEY LISTENER
+        // Set colors based on mode (No CSS tricks, just real colors)
+        const BG_COLOR = isDarkMode ? "#1e1e1e" : "#ffffff";
+        const INK_COLOR = isDarkMode ? "#ffffff" : "#000000";
+        const GUIDE_COLOR = isDarkMode ? "#444444" : "#e0e0e0";
+
+        window.addEventListener('load', async function() {
+            // Try to wait for fonts, but don't block forever
+            try { await document.fonts.ready; } catch(e) {}
+
+            document.getElementById("forgeBtn").addEventListener("click", generate);
             document.getElementById("intention").addEventListener("keypress", function(event) {
                 if (event.key === "Enter") {
                     event.preventDefault();
                     generate();
                 }
             });
+
+            // Listen for system theme changes to redraw automatically
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                location.reload(); // Simple reload to apply new theme colors
+            });
         });
 
         function generate() {
             const inputField = document.getElementById('intention');
-            if(!inputField.value) {
-                alert("Please enter an intention first.");
-                return;
-            }
+            if(!inputField.value) { alert("Please enter an intention first."); return; }
 
             const input = inputField.value.toUpperCase();
             const vowels = ['A','E','I','O','U',' '];
-            
-            // Filter Letters
             let uniqueLetters = [...new Set(input.split('').filter(c => !vowels.includes(c) && /[A-Z]/.test(c)))];
             
-            if(uniqueLetters.length === 0) { 
-                alert("No valid letters found. Try a longer phrase."); 
-                return; 
-            }
+            if(uniqueLetters.length === 0) { alert("No valid letters found."); return; }
 
             drawCrest(uniqueLetters);
             drawWheel(uniqueLetters);
         }
 
-        // STYLE 1: CREST
         function drawCrest(letters) {
             const canvas = document.getElementById('crestCanvas');
             const ctx = canvas.getContext('2d');
             const w = canvas.width; const h = canvas.height; const cx = w/2; const cy = h/2;
 
-            // PAINT BACKGROUND WHITE FIRST (CRITICAL FOR DARK MODE)
-            ctx.fillStyle = "#ffffff";
+            // 1. Paint Solid Background
+            ctx.fillStyle = BG_COLOR;
             ctx.fillRect(0, 0, w, h);
 
+            // 2. Set Ink Style
+            ctx.strokeStyle = INK_COLOR;
+            ctx.fillStyle = INK_COLOR;
+            ctx.lineWidth = 4;
+
             // Ring
-            ctx.strokeStyle = "#111"; ctx.lineWidth = 4; ctx.beginPath();
-            ctx.arc(cx, cy, 150, 0, Math.PI*2); ctx.stroke();
+            ctx.beginPath(); ctx.arc(cx, cy, 150, 0, Math.PI*2); ctx.stroke();
 
             // Spine
             ctx.lineWidth = 3; ctx.beginPath();
@@ -228,19 +221,12 @@
             ctx.stroke();
 
             // Letters
-            ctx.fillStyle = "#111";
-            ctx.font = "60px 'Cinzel Decorative', 'Times New Roman', serif";
+            ctx.font = "60px 'Cinzel Decorative', serif";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
             
-            let yPos = 80; 
-            let idx = 0;
-
-            if (letters.length % 2 !== 0) {
-                ctx.fillText(letters[idx], cx, yPos);
-                idx++;
-                yPos += 70;
-            }
+            let yPos = 80; let idx = 0;
+            if (letters.length % 2 !== 0) { ctx.fillText(letters[idx], cx, yPos); idx++; yPos += 70; }
 
             while(idx < letters.length) {
                 if(letters[idx]) ctx.fillText(letters[idx], cx - 50, yPos);
@@ -251,17 +237,19 @@
             }
         }
 
-        // STYLE 2: STAR
         function drawWheel(letters) {
             const canvas = document.getElementById('wheelCanvas');
             const ctx = canvas.getContext('2d');
             const w = canvas.width; const h = canvas.height; const cx = w/2; const cy = h/2;
             
-            // PAINT BACKGROUND WHITE FIRST (CRITICAL FOR DARK MODE)
-            ctx.fillStyle = "#ffffff";
+            // 1. Paint Solid Background
+            ctx.fillStyle = BG_COLOR;
             ctx.fillRect(0, 0, w, h);
             
-            ctx.strokeStyle="#e0e0e0"; ctx.lineWidth=1; ctx.beginPath(); ctx.arc(cx,cy,140,0,Math.PI*2); ctx.stroke();
+            // 2. Draw Weak Guide Circle
+            ctx.strokeStyle = GUIDE_COLOR;
+            ctx.lineWidth = 1; 
+            ctx.beginPath(); ctx.arc(cx,cy,140,0,Math.PI*2); ctx.stroke();
 
             const points = [];
             letters.forEach(char => {
@@ -271,14 +259,18 @@
             });
 
             if(points.length>0) {
-                // Lines
-                ctx.strokeStyle="#222"; ctx.lineWidth=2; ctx.beginPath();
+                ctx.strokeStyle = INK_COLOR;
+                ctx.fillStyle = INK_COLOR;
+                ctx.lineWidth = 2; 
+
+                ctx.beginPath();
                 ctx.moveTo(points[0].x, points[0].y);
                 for(let i=1; i<points.length; i++) ctx.lineTo(points[i].x, points[i].y);
                 ctx.stroke();
                 
-                // Markers
-                ctx.fillStyle="#fff"; ctx.fill(); ctx.beginPath(); ctx.arc(points[0].x,points[0].y,5,0,Math.PI*2); ctx.stroke();
+                for(let i=0; i<points.length; i++) {
+                    ctx.beginPath(); ctx.arc(points[i].x, points[i].y, 4, 0, Math.PI*2); ctx.fill();
+                }
             }
         }
     </script>
