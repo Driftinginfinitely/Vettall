@@ -160,13 +160,14 @@
         // Check for Dark Mode Preference
         const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-        // Set colors based on mode (No CSS tricks, just real colors)
+        // Set colors based on mode
+        // Dark Mode: Dark Canvas, White Ink
+        // Light Mode: White Canvas, Black Ink
         const BG_COLOR = isDarkMode ? "#1e1e1e" : "#ffffff";
         const INK_COLOR = isDarkMode ? "#ffffff" : "#000000";
-        const GUIDE_COLOR = isDarkMode ? "#444444" : "#e0e0e0";
 
         window.addEventListener('load', async function() {
-            // Try to wait for fonts, but don't block forever
+            // Wait for fonts to ensure text draws correctly
             try { await document.fonts.ready; } catch(e) {}
 
             document.getElementById("forgeBtn").addEventListener("click", generate);
@@ -177,9 +178,9 @@
                 }
             });
 
-            // Listen for system theme changes to redraw automatically
+            // Auto-reload if user switches dark/light mode while page is open
             window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-                location.reload(); // Simple reload to apply new theme colors
+                location.reload(); 
             });
         });
 
@@ -246,10 +247,12 @@
             ctx.fillStyle = BG_COLOR;
             ctx.fillRect(0, 0, w, h);
             
-            // 2. Draw Weak Guide Circle
-            ctx.strokeStyle = GUIDE_COLOR;
-            ctx.lineWidth = 1; 
-            ctx.beginPath(); ctx.arc(cx,cy,140,0,Math.PI*2); ctx.stroke();
+            // 2. Draw Strong Outer Circle
+            ctx.strokeStyle = INK_COLOR;  
+            ctx.lineWidth = 4;            // Strong line width (same as Crest)
+            ctx.beginPath(); 
+            ctx.arc(cx,cy,140,0,Math.PI*2); 
+            ctx.stroke();
 
             const points = [];
             letters.forEach(char => {
@@ -259,17 +262,18 @@
             });
 
             if(points.length>0) {
-                ctx.strokeStyle = INK_COLOR;
+                // Draw Inner Lines
                 ctx.fillStyle = INK_COLOR;
-                ctx.lineWidth = 2; 
-
+                ctx.lineWidth = 2; // Slightly thinner for the connecting lines
+                
                 ctx.beginPath();
                 ctx.moveTo(points[0].x, points[0].y);
                 for(let i=1; i<points.length; i++) ctx.lineTo(points[i].x, points[i].y);
                 ctx.stroke();
                 
+                // Draw Dots
                 for(let i=0; i<points.length; i++) {
-                    ctx.beginPath(); ctx.arc(points[i].x, points[i].y, 4, 0, Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(points[i].x, points[i].y, 5, 0, Math.PI*2); ctx.fill();
                 }
             }
         }
