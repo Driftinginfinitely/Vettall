@@ -13,26 +13,11 @@
         /* --- CSS STYLES --- */
         
         :root {
-            /* Light Mode (Default) */
             --primary-dark: #1a2a3a;   /* Midnight Blue */
             --accent-gold: #d4af37;    /* Muted Gold */
             --bg-paper: #f9f8f4;       /* Off-White / Parchment */
-            --bg-card: #ffffff;        /* White for remedy boxes */
-            --text-dark: #2c2c2c;      /* Dark text */
-            --text-light: #f9f8f4;     /* Light text for dark sections */
-            --border-subtle: rgba(0,0,0,0.1);
-        }
-
-        /* DARK MODE VARIABLES */
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --primary-dark: #1a2a3a;   /* Keep Midnight Blue headers */
-                --bg-paper: #121212;       /* Deep Charcoal (Matches Sigil Gen) */
-                --bg-card: #1e1e1e;        /* Darker grey for cards */
-                --text-dark: #e0e0e0;      /* Light Grey text */
-                --text-light: #e0e0e0;     /* Light text */
-                --border-subtle: rgba(255,255,255,0.1);
-            }
+            --text-dark: #2c2c2c;
+            --text-light: #f9f8f4;
         }
 
         html {
@@ -56,16 +41,6 @@
             font-family: 'Cormorant Garamond', serif;
             color: var(--primary-dark);
             font-weight: 600;
-        }
-        
-        /* Ensure headers are light in Dark Mode unless they are in white boxes */
-        @media (prefers-color-scheme: dark) {
-            h1, h2, h3, h4, h5 {
-                color: var(--accent-gold); /* Gold headers in dark mode look better */
-            }
-            .remedy-col h5 {
-                color: var(--accent-gold);
-            }
         }
 
         a {
@@ -222,7 +197,7 @@
         .skill-list {
             margin-top: 3rem;
             padding-top: 2rem;
-            border-top: 1px solid var(--border-subtle);
+            border-top: 1px solid rgba(0,0,0,0.1);
             list-style: none;
             display: flex;
             flex-wrap: wrap;
@@ -238,11 +213,6 @@
             position: relative;
         }
         
-        /* Ensure list items are gold in dark mode */
-        @media (prefers-color-scheme: dark) {
-            .skill-list li { color: var(--accent-gold); }
-        }
-        
         .skill-list li:not(:last-child)::after {
             content: "•";
             margin-left: 1.5rem;
@@ -256,14 +226,6 @@
             padding: 5rem 2rem;
             text-align: center;
         }
-        
-        @media (prefers-color-scheme: dark) {
-            .dark-section {
-                /* In dark mode, we can keep it dark or make it slightly different */
-                background-color: #15202b; 
-                color: var(--text-dark);
-            }
-        }
 
         .dark-section h3 {
             color: var(--accent-gold);
@@ -271,17 +233,12 @@
             margin-bottom: 1rem;
         }
         
-        /* New Style for the Intro Note */
-        .intro-note {
-            color: var(--text-light);
+        .consultation-note {
             max-width: 700px;
             margin: 0 auto 3rem auto;
             font-size: 1.1rem;
             opacity: 0.9;
-        }
-        
-        @media (prefers-color-scheme: dark) {
-             .intro-note { color: var(--text-dark); }
+            color: var(--text-light);
         }
 
         .quote {
@@ -336,7 +293,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 3rem;
-            background-color: var(--bg-card); /* Changed from white to variable */
+            background-color: white;
             padding: 3rem;
             box-shadow: 0 5px 20px rgba(0,0,0,0.05);
             border-top: 3px solid var(--accent-gold);
@@ -346,12 +303,8 @@
             font-size: 1.4rem;
             margin-bottom: 1.5rem;
             color: var(--primary-dark);
-            border-bottom: 1px solid var(--border-subtle);
+            border-bottom: 1px solid #eee;
             padding-bottom: 0.5rem;
-        }
-        
-        @media (prefers-color-scheme: dark) {
-            .remedy-col h5 { color: var(--accent-gold); }
         }
 
         .remedy-col ul {
@@ -379,8 +332,10 @@
             text-align: center;
         }
         
-        @media (prefers-color-scheme: dark) {
-            .footer { background-color: #1a1a1a; }
+        .footer h3 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: var(--primary-dark);
         }
 
         .contact-box {
@@ -388,10 +343,6 @@
             margin: 2rem auto 0;
             padding: 2rem;
             border: 1px solid var(--primary-dark);
-        }
-        
-        @media (prefers-color-scheme: dark) {
-            .contact-box { border-color: var(--accent-gold); }
         }
 
         .email-link {
@@ -402,16 +353,11 @@
             color: var(--primary-dark);
             margin: 1rem 0;
         }
-        
-        @media (prefers-color-scheme: dark) {
-            .email-link { color: var(--text-dark); }
-        }
 
         .email-link:hover {
             color: var(--accent-gold);
         }
         
-        /* COPYRIGHT STYLE */
         .copyright {
             margin-top: 2rem;
             font-size: 0.8rem;
@@ -419,12 +365,8 @@
             color: #666;
             text-transform: uppercase;
             letter-spacing: 1px;
-            border-top: 1px solid var(--border-subtle);
+            border-top: 1px solid #ccc;
             padding-top: 1rem;
-        }
-        
-        @media (prefers-color-scheme: dark) {
-             .copyright { color: #aaa; }
         }
 
         /* MOBILE RESPONSIVE */
@@ -488,7 +430,7 @@
     <section id="services" class="dark-section">
         <h3>Consultations</h3>
         
-        <p class="intro-note">
+        <p class="consultation-note">
             I am primarily accepting consultations for Prashna charts right now, but will consider birth chart readings on a case to case basis.
         </p>
 
@@ -497,11 +439,11 @@
         <div class="cards-grid">
             <div class="card">
                 <h4>Analysis & Depth</h4>
-                <p>Prashna (Horary) Astrology casts a chart for the exact moment of a query. It is a profound system capable of analysing complex situations in great depth—from detailed relationship dynamics to business strategy. Unlike a birth chart which outlines general potential, Prashna zooms in on the specific mechanics of the present moment.</p>
+                <p>Prashna (Horary) Astrology casts a chart for the exact moment of a query. It is a profound system capable of analysing complex situations in great depth—from detailed relationship dynamics to business strategy. A Prashna chart zooms in on the specific mechanics of the present moment.</p>
             </div>
             <div class="card">
                 <h4>Pointed Answers</h4>
-                <p>Because of its specificity, Prashna offers pointed, clear-cut answers, often providing a definitive "Yes" or "No" where other methods remain vague. It is best used for resolving specific dilemmas and obtaining actionable clarity on immediate questions.</p>
+                <p>Because of its specificity, Prashna analysis offers pointed, clear-cut answers, and can often provide a definitive "Yes" or "No". It is best used for resolving specific dilemmas and obtaining actionable clarity on immediate questions.</p>
             </div>
         </div>
     </section>
@@ -542,7 +484,7 @@
     </section>
 
     <section id="contact" class="footer">
-        <h3>Consultation</h3>
+        <h3>Contact</h3>
         <p>I am based in London but provide consultations globally.</p>
         
         <div class="contact-box">
