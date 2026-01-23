@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sigil Generator | Vettall</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* BASE STYLES */
+        :root {
+            --bg-color: #f9f9f9;
+            --text-color: #333;
+            --panel-bg: #fff;
+            --input-bg: #fff;
+            --border-color: #ddd;
+            --accent-color: #222;
+            --canvas-shadow: rgba(0,0,0,0.08);
+        }
+
+        /* DARK MODE VARIABLES */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #121212;
+                --text-color: #e0e0e0;
+                --panel-bg: #1e1e1e;
+                --input-bg: #1e1e1e;
+                --border-color: #333;
+                --accent-color: #e0e0e0;
+                --canvas-shadow: rgba(0,0,0,0.5);
+            }
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            scroll-behavior: smooth;
+        }
+
+        /* --- HEADER & MENU --- */
+        header {
+            width: 100%;
+            background-color: var(--panel-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 20px 0;
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .header-container {
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center; 
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+
+        /* Brand Group (Logo + Tagline) */
+        .brand-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-decoration: none;
+            gap: 4px;
+        }
+
+        .brand-logo {
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: 24px;
+            color: var(--text-color);
+            font-weight: bold;
+            letter-spacing: 2px;
+            line-height: 1;
+        }
+
+        .brand-tagline {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 11px; 
+            letter-spacing: 0.5px;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-weight: 400;
+        }
+
+        /* Navigation */
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .nav-links a:hover { opacity: 1; }
+
+        /* --- MAIN LAYOUT --- */
+        .main-content {
+            width: 100%;
+            max-width: 1000px;
+            padding: 0 20px 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1; /* Pushes footer down */
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: 32px;
+            margin-bottom: 20px;
+            margin-top: 0;
+            color: var(--text-color);
+            text-align: center;
+        }
+
+        /* INTRO BOX */
+        .intro-text {
+            width: 100%;
+            background: var(--panel-bg);
+            padding: 25px 30px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+            color: var(--text-color);
+            box-shadow: 0 2px 5px var(--canvas-shadow);
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box; 
+        }
+        
+        .intro-content {
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+        }
+        .intro-left { flex: 1; border-right: 1px solid var(--border-color); padding-right: 20px; }
+        .intro-right { flex: 1.2; }
+
+        .intro-text h3 { margin-top: 0; margin-bottom: 10px; color: var(--text-color); font-family: 'Cinzel Decorative', cursive; font-size: 18px; }
+        .intro-text p { margin-bottom: 0; font-size: 15px; opacity: 0.9; }
+        ul { margin: 0; padding-left: 20px; }
+        li { margin-bottom: 6px; font-size: 15px; }
+
+        /* INPUT AREA */
+        .input-group { 
+            margin-bottom: 40px; 
+            display: flex; 
+            gap: 10px; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            width: 100%;
+            max-width: 600px;
+        }
+        
+        input {
+            padding: 14px; font-size: 18px; 
+            border: 2px solid var(--text-color); 
+            text-align: center; 
+            text-transform: uppercase; 
+            width: 350px; 
+            font-family: 'Cinzel Decorative', cursive; 
+            border-radius: 4px; outline: none;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+        }
+        
+        button {
+            padding: 14px 30px; 
+            background: var(--text-color); 
+            color: var(--bg-color); 
+            border: none; cursor: pointer; 
+            font-weight: bold; border-radius: 4px; letter-spacing: 1px; transition: opacity 0.2s;
+        }
+        button:hover { opacity: 0.8; }
+
+        /* OUTPUT PANELS */
+        .display-area { display: flex; gap: 40px; flex-wrap: wrap; justify-content: center; width: 100%; }
+        .panel { text-align: center; }
+        .panel h2 { font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: var(--text-color); margin-bottom: 15px; opacity: 0.7; }
+        
+        canvas {
+            border-radius: 4px;
+            box-shadow: 0 5px 20px var(--canvas-shadow);
+            border: 1px solid var(--border-color);
+            max-width: 100%; 
+            height: auto; 
+        }
+
+        /* --- FOOTER & DISCLAIMER --- */
+        footer {
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+            margin-top: 40px;
+            border-top: 1px solid var(--border-color);
+            background: var(--panel-bg);
+            box-sizing: border-box;
+        }
+        .disclaimer {
+            font-size: 11px;
+            color: var(--text-color);
+            opacity: 0.5;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.4;
+        }
+
+        /* --- MOBILE OPTIMIZATION --- */
+        @media (max-width: 700px) {
+            h1 { font-size: 26px; }
+
+            .header-container { flex-direction: column; gap: 15px; align-items: center; }
+            .brand-group { align-items: center; } 
+
+            .intro-content { flex-direction: column; gap: 20px; }
+            .intro-left { border-right: none; padding-right: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 20px; }
+            
+            .input-group { gap: 15px; margin-bottom: 30px; }
+            input { width: 100%; box-sizing: border-box; } 
+            button { width: 100%; padding: 16px; font-size: 16px; } 
+
+            .display-area { gap: 30px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <a href="index.html" class="brand-group">
+                <span class="brand-logo">VETTALL</span>
+                <span class="brand-tagline">Approaching Peace through Self-Discovery</span>
+            </a>
+            
+            <nav class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="index.html#about">About</a> 
+                <a href="index.html#contact">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="main-content">
+        <h1>Sigil Generator</h1>
+
+        <div class="intro-text">
+            <div class="intro-content">
+                <div class="intro-left">
+                    <h3>What is a Sigil?</h3>
+                    <p>
+                        A sigil is a symbol created to bypass the conscious mind and plant an intention deep in the subconscious. 
+                        By turning a written intention (for example: "I HAVE STRENGTH") into an abstract glyph, you remove the language of doubt.
+                    </p>
+                </div>
+                <div class="intro-right">
+                    <h3>How to use:</h3>
+                    <ul>
+                        <li><strong>Enter intention</strong> below (max 60 characters).</li>
+                        <li>The generator removes vowels and repeated letters.</li>
+                        <li>It creates a <strong>Crest</strong> (Left) and <strong>Star Path</strong> (Right).</li>
+                        <li><strong>Save the one that resonates with you.</strong></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="intention" placeholder="I HAVE STRENGTH" maxlength="60">
+            <button id="forgeBtn">FORGE</button>
+        </div>
+
+        <div class="display-area">
+            <div class="panel">
+                <h2>The Crest Seal</h2>
+                <canvas id="crestCanvas" width="350" height="350"></canvas>
+            </div>
+            <div class="panel">
+                <h2>The Star Path</h2>
+                <canvas id="wheelCanvas" width="350" height="350"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="disclaimer">
+            Disclaimer: This tool is intended for entertainment, artistic, and creative visualisation purposes only. 
+            No specific outcomes are guaranteed.
+            <br><br>
+            &copy; <span id="year"></span> Vettall. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        // Set Year in Footer automatically
+        document.getElementById("year").textContent = new Date().getFullYear();
+
+        // Check for Dark Mode Preference
+        const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        // Set colors based on mode
+        const BG_COLOR = isDarkMode ? "#1e1e1e" : "#ffffff";
+        const INK_COLOR = isDarkMode ? "#ffffff" : "#000000";
+
+        window.addEventListener('load', async function() {
+            try { await document.fonts.ready; } catch(e) {}
+
+            document.getElementById("forgeBtn").addEventListener("click", generate);
+            document.getElementById("intention").addEventListener("keypress", function(event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    generate();
+                }
+            });
+
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                location.reload(); 
+            });
+        });
+
+        function generate() {
+            const inputField = document.getElementById('intention');
+            if(!inputField.value) { alert("Please enter an intention first."); return; }
+
+            const input = inputField.value.toUpperCase();
+            const vowels = ['A','E','I','O','U',' '];
+            let uniqueLetters = [...new Set(input.split('').filter(c => !vowels.includes(c) && /[A-Z]/.test(c)))];
+            
+            if(uniqueLetters.length === 0) { alert("No valid letters found."); return; }
+
+            drawCrest(uniqueLetters);
+            drawWheel(uniqueLetters);
+        }
+
+        // --- CREST WITH SMART SCALING ---
+        function drawCrest(letters) {
+            const canvas = document.getElementById('crestCanvas');
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width; const h = canvas.height; const cx = w/2; const cy = h/2;
+
+            ctx.fillStyle = BG_COLOR;
+            ctx.fillRect(0, 0, w, h);
+
+            ctx.strokeStyle = INK_COLOR;
+            ctx.fillStyle = INK_COLOR;
+            ctx.lineWidth = 4;
+
+            // Ring (Radius 150)
+            ctx.beginPath(); ctx.arc(cx, cy, 150, 0, Math.PI*2); ctx.stroke();
+
+            // Spine
+            ctx.lineWidth = 3; ctx.beginPath();
+            ctx.moveTo(cx, 50); ctx.lineTo(cx, 300); 
+            ctx.lineTo(cx-10, 280); ctx.moveTo(cx, 300); ctx.lineTo(cx+10, 280); 
+            ctx.stroke();
+
+            // Scaling Logic
+            const isOdd = letters.length % 2 !== 0;
+            const numLines = isOdd ? 1 + (letters.length - 1)/2 : letters.length/2;
+            
+            const maxSafeHeight = 220; 
+            const baseLineHeight = 60;
+            const baseFontSize = 48;
+            
+            const neededHeight = numLines * baseLineHeight;
+            let scaleFactor = 1;
+            
+            if (neededHeight > maxSafeHeight) {
+                scaleFactor = maxSafeHeight / neededHeight;
+            }
+
+            const finalFontSize = Math.floor(baseFontSize * scaleFactor);
+            const finalLineHeight = baseLineHeight * scaleFactor;
+            const finalSpread = 40 * scaleFactor;
+
+            const totalTextHeight = (numLines - 1) * finalLineHeight;
+            let yPos = cy - (totalTextHeight / 2);
+
+            ctx.font = finalFontSize + "px 'Cinzel Decorative', serif";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            
+            let idx = 0;
+            if (isOdd) {
+                ctx.fillText(letters[idx], cx, yPos);
+                idx++;
+                yPos += finalLineHeight;
+            }
+
+            while(idx < letters.length) {
+                if(letters[idx]) ctx.fillText(letters[idx], cx - finalSpread, yPos);
+                idx++;
+                if(letters[idx]) ctx.fillText(letters[idx], cx + finalSpread, yPos);
+                idx++;
+                yPos += finalLineHeight;
+            }
+        }
+
+        // --- STAR PATH (Thick Circle 150) ---
+        function drawWheel(letters) {
+            const canvas = document.getElementById('wheelCanvas');
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width; const h = canvas.height; const cx = w/2; const cy = h/2;
+            
+            ctx.fillStyle = BG_COLOR;
+            ctx.fillRect(0, 0, w, h);
+            
+            ctx.strokeStyle = INK_COLOR;  
+            ctx.lineWidth = 4;            
+            ctx.beginPath(); 
+            ctx.arc(cx,cy,150,0,Math.PI*2); 
+            ctx.stroke();
+
+            const points = [];
+            letters.forEach(char => {
+                const code = char.charCodeAt(0)-65;
+                const angle = (code/26)*(Math.PI*2)-(Math.PI/2);
+                points.push({x:cx+Math.cos(angle)*130, y:cy+Math.sin(angle)*130});
+            });
+
+            if(points.length>0) {
+                ctx.fillStyle = INK_COLOR;
+                ctx.lineWidth = 2; 
+                
+                ctx.beginPath();
+                ctx.moveTo(points[0].x, points[0].y);
+                for(let i=1; i<points.length; i++) ctx.lineTo(points[i].x, points[i].y);
+                ctx.stroke();
+                
+                for(let i=0; i<points.length; i++) {
+                    ctx.beginPath(); ctx.arc(points[i].x, points[i].y, 5, 0, Math.PI*2); ctx.fill();
+                }
+            }
+        }
+    </script>
+</body>
+</html>
