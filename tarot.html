@@ -1,68 +1,77 @@
-<!DOCTYPE html>
-<html lang="en">
+ <!DOCTYPE html>
+<html lang="en-GB">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Arcana Celestial Tarot</title>
+  <title>Arcana Celestial Tarot - Full 78-Card Oracle</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts for Mystical Typography -->
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
     :root {
       --gold-primary: #d4af37;
-      --gold-light: #f7e089;
+      --gold-light: #fae69e;
       --gold-dark: #8b6b23;
-      --midnight: #0b0c16;
-      --deep-indigo: #131428;
+      --midnight: #090a12;
+      --deep-indigo: #111227;
     }
 
     body {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Cormorant Garamond', Georgia, serif;
       background-color: var(--midnight);
       color: #e2e8f0;
       overflow-x: hidden;
       min-height: 100vh;
     }
 
-    .font-cinzel {
-      font-family: 'Cinzel', serif;
-    }
+    .font-cinzel { font-family: 'Cinzel', serif; }
+    .font-decorative { font-family: 'Cinzel Decorative', cursive; }
+    .font-sans-ui { font-family: 'Inter', -apple-system, sans-serif; }
 
-    .font-decorative {
-      font-family: 'Cinzel Decorative', cursive;
-    }
-
-    .font-sans-ui {
-      font-family: 'Inter', sans-serif;
-    }
-
-    /* Celestial Golden Glows & Gradients */
     .gold-gradient-text {
-      background: linear-gradient(135deg, #fff7c2 0%, #e0bc58 50%, #a87920 100%);
+      background: linear-gradient(135deg, #fff3b0 0%, #d4af37 50%, #99731f 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
     .celestial-border {
-      border: 1px solid rgba(212, 175, 55, 0.28);
-      box-shadow: 0 0 20px -5px rgba(212, 175, 55, 0.15);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      box-shadow: 0 0 25px -5px rgba(212, 175, 55, 0.12);
     }
 
     .glass-panel {
-      background: rgba(19, 20, 40, 0.72);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      background: rgba(17, 18, 39, 0.78);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
     }
 
-    /* 3D Card Flip Styling */
-    .perspective-1000 {
-      perspective: 1000px;
+    /* Fixed Stage & Card Perspective Settings to Prevent Overlap & Clipping */
+    .card-stage-container {
+      position: relative;
+      z-index: 30;
+      min-height: 480px;
+      isolation: isolate;
+    }
+
+    .card-cell {
+      position: relative;
+      width: 256px;
+      height: 400px;
+      perspective: 1200px;
+      -webkit-perspective: 1200px;
+      flex-shrink: 0;
+      z-index: 10;
+      transition: z-index 0.2s ease;
+    }
+
+    .card-cell:hover, .card-cell.is-revealed {
+      z-index: 25;
     }
 
     .card-inner {
@@ -70,9 +79,12 @@
       width: 100%;
       height: 100%;
       text-align: center;
-      transition: transform 0.85s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: transform 0.85s cubic-bezier(0.2, 0.85, 0.35, 1.2);
       transform-style: preserve-3d;
+      -webkit-transform-style: preserve-3d;
       cursor: pointer;
+      will-change: transform;
+      border-radius: 1.25rem;
     }
 
     .card-flipped {
@@ -81,31 +93,37 @@
 
     .card-face {
       position: absolute;
+      inset: 0;
       width: 100%;
       height: 100%;
       -webkit-backface-visibility: hidden;
       backface-visibility: hidden;
-      border-radius: 1rem;
+      border-radius: 1.25rem;
+      overflow: hidden;
     }
 
     .card-back {
-      background: radial-gradient(circle at center, #1b1938 0%, #0d0e1e 100%);
-      border: 2px solid #c9a039;
-      box-shadow: inset 0 0 16px rgba(212, 175, 55, 0.3), 0 10px 25px -5px rgba(0, 0, 0, 0.7);
+      background: radial-gradient(circle at center, #1b1c3b 0%, #0d0e1f 100%);
+      border: 2px solid #c8a33a;
+      box-shadow: 0 16px 30px -10px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(212, 175, 55, 0.25);
+      z-index: 2;
+      transform: rotateY(0deg);
     }
 
     .card-front {
-      background: radial-gradient(circle at 50% 20%, #201f3d 0%, #0c0d1a 100%);
+      background: radial-gradient(circle at 50% 15%, #24244d 0%, #0c0d1a 100%);
       transform: rotateY(180deg);
       border: 2px solid #d4af37;
-      box-shadow: 0 12px 30px -5px rgba(212, 175, 55, 0.25), 0 0 12px rgba(212, 175, 55, 0.2);
+      box-shadow: 0 18px 40px -8px rgba(0, 0, 0, 0.9), 0 0 20px rgba(212, 175, 55, 0.28);
+      z-index: 1;
     }
 
-    .card-reversed .card-symbol-container {
-      transform: rotate(180deg);
+    /* Reversed card face physically rotated 180 degrees (upside down) */
+    .card-face.card-front-reversed {
+      transform: rotateY(180deg) rotateZ(180deg);
     }
 
-    /* Twinkling Star Background */
+    /* Twinkling Canvas */
     #stars-canvas {
       position: fixed;
       top: 0;
@@ -116,612 +134,675 @@
       z-index: 0;
     }
 
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #090a13;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #4a3e1b;
-      border-radius: 3px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #8b6b23;
+    /* Shuffling deck animation */
+    @keyframes deckShuffle {
+      0% { transform: scale(1) translateY(0); }
+      30% { transform: scale(0.97) translateY(-14px) rotate(-2deg); }
+      70% { transform: scale(1.02) translateY(6px) rotate(2deg); }
+      100% { transform: scale(1) translateY(0); }
     }
 
-    /* Pulsing & Subtle Shimmers */
-    @keyframes subtlePulse {
-      0%, 100% { opacity: 0.8; transform: scale(1); }
-      50% { opacity: 1; transform: scale(1.02); }
-    }
-    .animate-pulse-subtle {
-      animation: subtlePulse 4s infinite ease-in-out;
+    .shuffling-animation {
+      animation: deckShuffle 0.65s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    @keyframes goldenGleam {
-      0% { background-position: -200% 0; }
-      100% { background-position: 200% 0; }
-    }
     .golden-button {
-      background: linear-gradient(90deg, #d4af37 0%, #fff2a3 50%, #d4af37 100%);
+      background: linear-gradient(90deg, #d4af37 0%, #fae69e 50%, #d4af37 100%);
       background-size: 200% auto;
       transition: all 0.3s ease;
     }
     .golden-button:hover {
       background-position: right center;
-      box-shadow: 0 0 18px rgba(247, 224, 137, 0.5);
+      box-shadow: 0 0 20px rgba(250, 230, 158, 0.45);
     }
   </style>
 </head>
 <body class="relative flex flex-col justify-between selection:bg-amber-600/30 selection:text-amber-200">
 
-  <!-- Interactive Starry Sky Canvas -->
+  <!-- Interactive Night Sky Canvas -->
   <canvas id="stars-canvas"></canvas>
 
   <div class="relative z-10 flex flex-col min-h-screen">
     
-    <!-- Top Navigation & Sanctuary Header -->
-    <header class="border-b border-amber-900/30 bg-black/40 backdrop-blur-md sticky top-0 z-40 px-4 sm:px-8 py-4">
+    <!-- Top Sanctuary Header -->
+    <header class="border-b border-amber-900/30 bg-black/50 backdrop-blur-md sticky top-0 z-40 px-4 sm:px-8 py-3.5">
       <div class="max-w-6xl mx-auto flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full border border-amber-400/50 flex items-center justify-center bg-amber-500/10 shadow-[0_0_12px_rgba(212,175,55,0.3)]">
+          <div class="w-10 h-10 rounded-full border border-amber-400/50 flex items-center justify-center bg-amber-500/10 shadow-[0_0_15px_rgba(212,175,55,0.3)]">
             <i data-lucide="sparkles" class="w-5 h-5 text-amber-300"></i>
           </div>
           <div>
             <h1 class="font-decorative text-xl sm:text-2xl gold-gradient-text tracking-wider font-bold">ARCANA</h1>
-            <p class="font-cinzel text-xs text-amber-200/60 uppercase tracking-widest hidden sm:block">Celestial Divination & Reflection</p>
+            <p class="font-cinzel text-[11px] text-amber-200/60 uppercase tracking-widest hidden sm:block">78-Card Celestial Oracle</p>
           </div>
         </div>
 
-        <!-- Controls: Sound Toggle & Journal Button -->
-        <div class="flex items-center gap-2 sm:gap-4 font-sans-ui text-sm">
-          <button id="sound-toggle-btn" class="px-3 py-2 rounded-lg border border-amber-500/30 bg-indigo-950/40 text-amber-200 hover:border-amber-400 hover:bg-amber-500/10 transition flex items-center gap-2" title="Toggle Celestial Chimes">
-            <i data-lucide="volume-2" id="sound-icon" class="w-4 h-4 text-amber-300"></i>
-            <span class="hidden md:inline text-xs tracking-wider uppercase font-medium">Chimes</span>
-          </button>
-          
-          <button id="open-journal-btn" class="px-3.5 py-2 rounded-lg border border-amber-500/30 bg-indigo-950/40 text-amber-200 hover:border-amber-400 hover:bg-amber-500/10 transition flex items-center gap-2">
-            <i data-lucide="book-marked" class="w-4 h-4 text-amber-300"></i>
-            <span class="text-xs tracking-wider uppercase font-medium">Journal (<span id="journal-count">0</span>)</span>
-          </button>
-        </div>
+        <!-- Chime Sound Control -->
+        <button id="sound-toggle-btn" class="px-3.5 py-1.5 rounded-lg border border-amber-500/30 bg-indigo-950/40 text-amber-200 hover:border-amber-400 hover:bg-amber-500/10 transition flex items-center gap-2 font-sans-ui text-xs" title="Toggle Celestial Chimes">
+          <i data-lucide="volume-2" id="sound-icon" class="w-4 h-4 text-amber-300"></i>
+          <span class="tracking-wider uppercase font-medium">Chimes</span>
+        </button>
       </div>
     </header>
 
-    <!-- Main Content Sanctuary Area -->
+    <!-- Sanctuary Center -->
     <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-10 flex flex-col items-center">
       
-      <!-- Greeting and Intention Setting -->
+      <!-- Greeting and Intention -->
       <section class="text-center max-w-2xl mb-8">
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-amber-500/20 bg-amber-500/5 text-amber-300/80 text-xs font-sans-ui uppercase tracking-widest mb-3">
-          <i data-lucide="moon" class="w-3.5 h-3.5"></i> Intuitive Divination
+          <i data-lucide="moon" class="w-3.5 h-3.5"></i> Authentic Divination
         </div>
-        <h2 class="font-cinzel text-2xl sm:text-4xl text-slate-100 font-bold mb-3 tracking-wide">
-          Consult the Oracle of the Stars
+        <h2 class="font-cinzel text-2xl sm:text-4xl text-slate-100 font-bold mb-2 tracking-wide">
+          Consult the Celestial Oracle
         </h2>
         <p class="text-amber-100/70 text-lg sm:text-xl font-normal leading-relaxed italic">
-          Breathe gently, steady your mind upon your question or present circumstance, and invite the wisdom of the Major Arcana to illuminate your path.
+          Breathe steadily, centre your intention upon your inquiry, and draw guidance from the eternal tapestry of the 78 tarot archetypes.
         </p>
       </section>
 
-      <!-- Spread Options & Ritual Controls -->
-      <div class="w-full max-w-3xl glass-panel celestial-border rounded-2xl p-4 sm:p-6 mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
+      <!-- Settings & Drawing Dashboard -->
+      <div class="w-full max-w-4xl glass-panel celestial-border rounded-2xl p-4 sm:p-6 mb-8 flex flex-col gap-4">
         
-        <!-- Spread Mode Tabs -->
-        <div class="flex items-center p-1 bg-black/50 rounded-xl border border-amber-900/40 w-full md:w-auto font-sans-ui text-xs font-medium">
-          <button id="mode-single-btn" class="flex-1 md:flex-initial px-4 py-2.5 rounded-lg text-amber-100 bg-amber-500/20 border border-amber-400/40 shadow-sm transition flex items-center justify-center gap-2">
-            <i data-lucide="sparkle" class="w-3.5 h-3.5 text-amber-300"></i>
-            Single Card <span class="text-amber-200/50 hidden sm:inline">(Daily Guidance)</span>
-          </button>
-          <button id="mode-three-btn" class="flex-1 md:flex-initial px-4 py-2.5 rounded-lg text-amber-200/70 hover:text-amber-100 transition flex items-center justify-center gap-2">
-            <i data-lucide="columns-3" class="w-3.5 h-3.5 text-amber-300"></i>
-            3-Card Spread <span class="text-amber-200/50 hidden sm:inline">(Past, Present, Future)</span>
-          </button>
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+          <!-- Spread Type Selector -->
+          <div class="flex items-center p-1 bg-black/60 rounded-xl border border-amber-900/40 w-full md:w-auto font-sans-ui text-xs font-medium">
+            <button id="mode-single-btn" class="flex-1 md:flex-initial px-4 py-2.5 rounded-lg text-amber-200/70 hover:text-amber-100 transition flex items-center justify-center gap-2">
+              <i data-lucide="sparkle" class="w-3.5 h-3.5 text-amber-300"></i>
+              Single Card <span class="text-amber-200/50 hidden sm:inline">(Daily Oracle)</span>
+            </button>
+            <button id="mode-three-btn" class="flex-1 md:flex-initial px-4 py-2.5 rounded-lg text-amber-100 bg-amber-500/20 border border-amber-400/40 shadow-sm transition flex items-center justify-center gap-2">
+              <i data-lucide="columns-3" class="w-3.5 h-3.5 text-amber-300"></i>
+              3-Card Spread <span class="text-amber-200/50 hidden sm:inline">(Past, Present, Future)</span>
+            </button>
+          </div>
+
+          <!-- Deck Configuration Selector -->
+          <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end font-sans-ui text-xs">
+            <!-- Deck Scope Dropdown -->
+            <div class="flex items-center gap-2">
+              <span class="text-amber-200/70">Deck:</span>
+              <select id="deck-scope-select" class="bg-black/70 border border-amber-500/40 rounded-lg px-3 py-2 text-amber-200 text-xs focus:outline-none focus:border-amber-400">
+                <option value="full" selected>Full 78-Card Deck</option>
+                <option value="major">Major Arcana Only (22)</option>
+              </select>
+            </div>
+
+            <!-- Reversals Toggle -->
+            <label class="flex items-center gap-2 cursor-pointer text-amber-200/80 hover:text-amber-100 select-none">
+              <input type="checkbox" id="allow-reversals" checked class="w-4 h-4 accent-amber-500 rounded border-amber-800 bg-black/60 cursor-pointer">
+              <span>Reversals</span>
+            </label>
+          </div>
         </div>
 
-        <!-- Reversals Toggle & Draw Action -->
-        <div class="flex items-center justify-between md:justify-end gap-4 w-full md:w-auto font-sans-ui">
-          <label class="flex items-center gap-2.5 cursor-pointer text-xs text-amber-200/80 hover:text-amber-100 select-none">
-            <input type="checkbox" id="allow-reversals" checked class="w-4 h-4 accent-amber-500 rounded border-amber-800 bg-black/60 cursor-pointer">
-            <span>Allow Reversals</span>
-          </label>
+        <!-- Draw & Action Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-amber-500/10">
+          <div class="text-xs font-sans-ui text-amber-300/70 flex items-center gap-2">
+            <i data-lucide="hand" class="w-4 h-4 animate-bounce"></i>
+            <span>Select any card to unveil its cosmic wisdom, or reveal all at once.</span>
+          </div>
 
-          <button id="draw-cards-btn" class="golden-button text-slate-950 px-5 py-2.5 rounded-xl font-cinzel font-bold text-xs uppercase tracking-wider flex items-center gap-2 shadow-lg hover:scale-105 active:scale-95 transition">
-            <i data-lucide="shuffle" class="w-4 h-4"></i>
-            <span>Shuffle & Draw</span>
-          </button>
+          <div class="flex items-center gap-3">
+            <button id="reveal-all-btn" class="px-4 py-2 rounded-xl border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-200 font-cinzel text-xs tracking-wider uppercase transition flex items-center gap-2">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+              <span>Reveal All</span>
+            </button>
+
+            <button id="draw-cards-btn" class="golden-button text-slate-950 px-5 py-2 rounded-xl font-cinzel font-bold text-xs uppercase tracking-wider flex items-center gap-2 shadow-lg hover:scale-105 active:scale-95 transition">
+              <i data-lucide="shuffle" class="w-4 h-4"></i>
+              <span>Shuffle & Draw</span>
+            </button>
+          </div>
         </div>
+
       </div>
 
-      <!-- Quick Hint Bar -->
-      <div id="interaction-hint" class="flex items-center justify-center gap-2 text-xs font-sans-ui text-amber-300/70 mb-6 transition-all duration-300">
-        <i data-lucide="hand" class="w-4 h-4 animate-bounce"></i>
-        <span>Tap any card to reveal its divine message, or use <strong>Reveal All</strong> below.</span>
-      </div>
+      <!-- ISOLATED CARD STAGE: Explicit heights, strictly isolated layout -->
+      <section aria-label="Tarot spread stage" class="w-full card-stage-container flex justify-center items-center py-6">
+        <div id="cards-container" class="w-full flex flex-wrap justify-center items-start gap-8 sm:gap-10">
+          <!-- Dynamic 3D Cards Injected Here -->
+        </div>
+      </section>
 
-      <!-- Cards Presentation Area -->
-      <div id="cards-container" class="w-full flex flex-wrap justify-center items-center gap-6 sm:gap-8 mb-10 min-h-[380px]">
-        <!-- Dynamic Cards Injected Here -->
-      </div>
-
-      <!-- Quick Reveal & Spread Controls -->
-      <div id="spread-actions" class="flex flex-wrap items-center justify-center gap-4 mb-12">
-        <button id="reveal-all-btn" class="px-5 py-2.5 rounded-xl border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-200 font-cinzel text-xs tracking-wider uppercase transition flex items-center gap-2">
-          <i data-lucide="eye" class="w-4 h-4"></i>
-          <span>Reveal All Cards</span>
-        </button>
-        <button id="save-reading-btn" class="px-5 py-2.5 rounded-xl border border-amber-500/40 bg-indigo-950/60 hover:bg-indigo-900/60 text-amber-200 font-cinzel text-xs tracking-wider uppercase transition flex items-center gap-2 opacity-50 cursor-not-allowed" disabled>
-          <i data-lucide="bookmark-plus" class="w-4 h-4"></i>
-          <span>Save to Journal</span>
-        </button>
-      </div>
-
-      <!-- Comprehensive Reading Interpretation Sanctuary -->
-      <div id="interpretation-panel" class="w-full max-w-4xl glass-panel celestial-border rounded-3xl p-6 sm:p-10 mb-12 hidden transition-all duration-700">
-        <div class="border-b border-amber-500/20 pb-5 mb-8 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-4">
+      <!-- READING DETAILS & INTERPRETATION SECTION -->
+      <section id="interpretation-section" class="relative z-10 w-full max-w-4xl glass-panel celestial-border rounded-3xl p-6 sm:p-10 mt-14 mb-16 hidden transition-all duration-700">
+        
+        <div class="border-b border-amber-500/20 pb-5 mb-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
           <div>
-            <span class="text-xs font-sans-ui uppercase tracking-widest text-amber-400/80">Celestial Insight</span>
-            <h3 id="interpretation-title" class="font-cinzel text-2xl sm:text-3xl text-amber-100 font-bold mt-1">Reading Synthesis</h3>
+            <span class="text-xs font-sans-ui uppercase tracking-widest text-amber-400/80">Oracle Revelations</span>
+            <h3 class="font-cinzel text-2xl sm:text-3xl text-amber-100 font-bold mt-1">Reading Interpretation</h3>
           </div>
-          <div id="reading-date-badge" class="font-sans-ui text-xs text-amber-300/60 border border-amber-500/20 px-3 py-1.5 rounded-full bg-black/30">
-            <!-- Timestamp -->
+          <div id="deck-mode-indicator" class="font-sans-ui text-xs text-amber-300/70 border border-amber-500/20 px-3.5 py-1.5 rounded-full bg-black/40">
+            <!-- Active Deck scope -->
           </div>
         </div>
 
-        <!-- Detailed Card Insights List -->
-        <div id="card-breakdowns" class="space-y-8 mb-8">
-          <!-- Populated dynamically per revealed card -->
+        <!-- Individual Card Deconstructions -->
+        <div id="card-breakdowns" class="space-y-6 mb-8">
+          <!-- Populated as cards are revealed -->
         </div>
 
-        <!-- Synthesis & Spiritual Guidance Box -->
+        <!-- Synthesis & Guidance Box -->
         <div id="synthesis-box" class="p-6 rounded-2xl bg-amber-500/5 border border-amber-400/20 relative overflow-hidden">
           <div class="absolute -right-6 -bottom-6 text-amber-500/5 pointer-events-none">
             <i data-lucide="compass" class="w-36 h-36"></i>
           </div>
           <h4 class="font-cinzel text-amber-300 text-lg font-bold mb-2 flex items-center gap-2">
-            <i data-lucide="feather" class="w-4 h-4"></i> Oracle's Synthesis & Reflection
+            <i data-lucide="feather" class="w-4 h-4"></i> Oracle's Synthesised Guidance
           </h4>
           <p id="synthesis-text" class="text-slate-200 text-base sm:text-lg leading-relaxed font-normal">
-            Draw and reveal your cards to synthesize an integrated message for your path.
+            Reveal your cards to synthesise the holistic celestial message.
           </p>
         </div>
-      </div>
+
+      </section>
 
     </main>
 
-    <!-- Reading Journal Modal Dialog -->
-    <div id="journal-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden transition-opacity">
-      <div class="glass-panel celestial-border w-full max-w-3xl max-h-[85vh] rounded-3xl p-6 sm:p-8 flex flex-col shadow-2xl relative">
-        <div class="flex items-center justify-between border-b border-amber-500/20 pb-4 mb-4">
-          <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-300">
-              <i data-lucide="book-open" class="w-4 h-4"></i>
-            </div>
-            <h3 class="font-cinzel text-xl text-amber-100 font-bold">Divination Journal</h3>
-          </div>
-          <button id="close-journal-btn" class="p-2 text-amber-300/60 hover:text-amber-100 transition rounded-lg hover:bg-white/5">
-            <i data-lucide="x" class="w-5 h-5"></i>
-          </button>
-        </div>
-
-        <!-- Journal Content List -->
-        <div id="journal-list" class="flex-grow overflow-y-auto space-y-4 pr-1">
-          <!-- Saved entries rendered here -->
-        </div>
-
-        <!-- Footer Actions -->
-        <div class="pt-4 mt-2 border-t border-amber-500/20 flex items-center justify-between">
-          <button id="clear-journal-btn" class="text-xs text-rose-300/70 hover:text-rose-200 transition font-sans-ui hover:underline">
-            Clear Journal History
-          </button>
-          <button id="close-journal-footer-btn" class="golden-button text-slate-950 font-cinzel text-xs font-bold px-4 py-2 rounded-lg">
-            Done
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Notification Toast -->
-    <div id="toast" class="fixed bottom-6 right-6 z-50 glass-panel border border-amber-400/40 text-amber-200 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 font-sans-ui text-sm transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
-      <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-400"></i>
-      <span id="toast-message">Reading saved to your celestial journal.</span>
-    </div>
-
     <!-- Footer -->
-    <footer class="border-t border-amber-900/30 py-6 px-4 text-center font-sans-ui text-xs text-amber-300/40">
+    <footer class="border-t border-amber-900/30 py-6 px-4 text-center font-sans-ui text-xs text-amber-300/40 relative z-10">
       <p class="font-cinzel tracking-wider text-amber-200/60 mb-1">ARCANA CELESTIAL SANCTUARY</p>
-      <p>Designed for daily contemplation, self-awareness, and intuitive harmony.</p>
+      <p>Traditional 78-card divination for contemplative mindfulness, self-honour, and daily clarity.</p>
     </footer>
 
   </div>
 
-  <!-- SCRIPT: Complete Tarot Database, Engine, Audio & State Management -->
+  <!-- SCRIPT: Complete 78-Card Database, Audio, and App Engine -->
   <script>
     /* =====================================================================
-       1. COMPLETE MAJOR ARCANA DATABASE (All 22 Cards with Detailed Meaning)
+       1. COMPLETE 78-CARD TAROT DATABASE (22 Major + 56 Minor Arcana)
        ===================================================================== */
-    const TAROT_DECK = [
+    const SUIT_SVG = {
+      major: `<path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"/>`,
+      wands: `<path d="m14.5 4-8 16M9.5 4l8 16M12 2v20M4 12h16"/><circle cx="12" cy="12" r="3"/>`,
+      cups: `<path d="M6 3h12v7a6 6 0 0 1-12 0V3zM12 16v5M8 21h8"/>`,
+      swords: `<path d="M12 2v16M8 15l4 3 4-3M12 18v3M9 21h6"/>`,
+      pentacles: `<circle cx="12" cy="12" r="9"/><polygon points="12 4.5 14.3 9.2 19.5 10 15.7 13.6 16.6 18.8 12 16.3 7.4 18.8 8.3 13.6 4.5 10 9.7 9.2 12 4.5"/>`
+    };
+
+    const FULL_TAROT_DECK = [
+      /* --- 22 MAJOR ARCANA --- */
       {
-        id: 0,
-        number: "0",
-        roman: "0",
-        name: "The Fool",
-        icon: "sun",
-        symbolSvg: `<path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>`,
-        keywords: ["Innocence", "New Beginnings", "Spontaneity", "Leap of Faith"],
-        upright: {
-          meaning: "A joyous call into the unknown. You stand upon the precipice of an exciting new cycle filled with optimism and limitless potential. Trust your instincts and dare to take the initial stride.",
-          advice: "Embrace curiosity and let go of lingering anxieties. Approach circumstances with pure heart and fresh eyes."
-        },
-        reversed: {
-          meaning: "Recklessness, naivety, or hesitation at the threshold of change. Either you are acting heedlessly without observing pitfalls, or lingering doubts hold you back from a worthy adventure.",
-          advice: "Ground yourself before leaping. Review the ground beneath your feet whilst not allowing cynism to stifle wonder."
-        }
+        id: "maj_0", suit: "Major", rank: "0", name: "The Fool", roman: "0",
+        keywords: ["Beginnings", "Innocence", "Leap of Faith", "Pure Potential"],
+        upright: { meaning: "A joyful invitation to embark upon an untrodden journey. Cast away cynicism, trust in benevolence, and take a brave step into the unknown.", advice: "Approach life with playful curiosity and unburdened heart." },
+        reversed: { meaning: "Recklessness, fear of beginning, or foolish risks taken without surveying the terrain.", advice: "Check your footing before stepping over the edge; discernment is your ally." }
       },
       {
-        id: 1,
-        number: "I",
-        roman: "I",
-        name: "The Magician",
-        icon: "sparkles",
-        symbolSvg: `<path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"/>`,
-        keywords: ["Manifestation", "Resourcefulness", "Power", "Inspired Action"],
-        upright: {
-          meaning: "You possess every element required—earth, air, fire, and water—to mould your desires into tangible existence. Thought, volition, and action are currently aligned in potent harmony.",
-          advice: "Focus your intent clearly. Channel your skills deliberately toward your most cherished goal; the universe is responsive."
-        },
-        reversed: {
-          meaning: "Misdirected energy, untapped talents, or deceitful manipulation. Either power is being hoarded for vanity, or latent creative genius is languishing unexpressed.",
-          advice: "Re-evaluate your intentions. Ensure your ambition honours truth and integrity rather than illusory shortcuts."
-        }
+        id: "maj_1", suit: "Major", rank: "I", name: "The Magician", roman: "I",
+        keywords: ["Manifestation", "Willpower", "Resourcefulness", "Creation"],
+        upright: { meaning: "You possess all necessary elements—fire, air, water, and earth—to transform intent into tangible reality.", advice: "Direct your focused will and channel your creative faculties with unswerving purpose." },
+        reversed: { meaning: "Misdirected power, illusion, untapped talents, or manipulation masquerading as skill.", advice: "Align personal ambition with truth; avoid cutting corners." }
       },
       {
-        id: 2,
-        number: "II",
-        roman: "II",
-        name: "The High Priestess",
-        icon: "moon",
-        symbolSvg: `<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>`,
-        keywords: ["Intuition", "Sacred Knowledge", "Divine Feminine", "Subconscious"],
-        upright: {
-          meaning: "The veil between the visible world and unseen truths grows thin. Deep inner knowing whispers quietly within. Not all mysteries are meant for hasty intellectual dissection.",
-          advice: "Listen to dreams, gut sentiments, and synchronicity. Seek quiet contemplation before delivering definitive conclusions."
-        },
-        reversed: {
-          meaning: "Silenced intuition, inner discord, or secrets weighing upon the conscience. You may be ignoring what you intuitively recognise in favour of rational convenience.",
-          advice: "Step away from noisy external opinions. Solitude will re-attune your ear to the sacred voice of your core self."
-        }
+        id: "maj_2", suit: "Major", rank: "II", name: "The High Priestess", roman: "II",
+        keywords: ["Intuition", "Mystery", "Sacred Knowledge", "Subconscious"],
+        upright: { meaning: "The veil is thin. Subtle inner whispers and symbolic dreams carry profound truths not yet revealed to the rational mind.", advice: "Withdraw into stillness. Consult your instinctual wisdom before acting." },
+        reversed: { meaning: "Ignoring inner guidance, keeping superficial secrets, or disconnecting from emotional intuition.", advice: "Silence external noise and listen to the voice within." }
       },
       {
-        id: 3,
-        number: "III",
-        roman: "III",
-        name: "The Empress",
-        icon: "flower-2",
-        symbolSvg: `<circle cx="12" cy="12" r="3"/><path d="M12 2a4.5 4.5 0 0 0-4.5 4.5c0 1.6.8 3 2 3.8a4.5 4.5 0 0 0 5 0c1.2-.8 2-2.2 2-3.8A4.5 4.5 0 0 0 12 2z"/><path d="M12 22a4.5 4.5 0 0 0 4.5-4.5c0-1.6-.8-3-2-3.8a4.5 4.5 0 0 0-5 0c-1.2.8-2 2.2-2 3.8A4.5 4.5 0 0 0 12 22z"/>`,
-        keywords: ["Fertility", "Abundance", "Sensuality", "Nurturing Creation"],
-        upright: {
-          meaning: "Unconditional warmth, creative fruition, and blossoming life. Projects, relationships, and wellbeing flourish beneath her generous aura. Generosity and sensual appreciation bring peace.",
-          advice: "Nurture what you wish to see thrive. Surround yourself with beauty, nature, and heartfelt compassion."
-        },
-        reversed: {
-          meaning: "Creative blockages, maternal disharmony, self-neglect, or smothering dependency. Giving excessively until your own well runs dry.",
-          advice: "Replenish your spirit first. True nurturance cannot flow from an exhausted or neglected vessel."
-        }
+        id: "maj_3", suit: "Major", rank: "III", name: "The Empress", roman: "III",
+        keywords: ["Abundance", "Fertility", "Sensuality", "Nurturance"],
+        upright: { meaning: "Creative fruition, flourishing prosperity, and the abundant beauty of nature welcoming your growth.", advice: "Nurture your ideas and relationships with gentle patience and heartfelt warmth." },
+        reversed: { meaning: "Creative blockage, smothering codependency, or neglect of your personal wellbeing.", advice: "Replenish your inner well before pouring further for others." }
       },
       {
-        id: 4,
-        number: "IV",
-        roman: "IV",
-        name: "The Emperor",
-        icon: "shield",
-        symbolSvg: `<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>`,
-        keywords: ["Authority", "Structure", "Stability", "Father Figure"],
-        upright: {
-          meaning: "Clear vision enacted through discipline, sovereign rule, and reliable frameworks. Chaos yields to orderly governance and resolute protection of what matters.",
-          advice: "Establish solid boundaries and execute plans methodically. Lead by noble example and calm composure."
-        },
-        reversed: {
-          meaning: "Tyranny, rigidity, loss of control, or rebellion against inflexible standards. An overuse of force hiding underlying vulnerability.",
-          advice: "Yield rigidity for resilience. Authority that does not bend with humanity inevitably cracks under pressure."
-        }
+        id: "maj_4", suit: "Major", rank: "IV", name: "The Emperor", roman: "IV",
+        keywords: ["Authority", "Structure", "Stability", "Sovereignty"],
+        upright: { meaning: "Orderly governance, grounded frameworks, and resolute boundaries establishing long-term peace.", advice: "Bring systematic discipline and calm, objective authority to current challenges." },
+        reversed: { meaning: "Tyranny, rigidity, loss of control, or rebellion against oppressive constraints.", advice: "Soften rigidity with compassion; true sovereignty does not demand tyranny." }
       },
       {
-        id: 5,
-        number: "V",
-        roman: "V",
-        name: "The Hierophant",
-        icon: "landmark",
-        symbolSvg: `<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>`,
+        id: "maj_5", suit: "Major", rank: "V", name: "The Hierophant", roman: "V",
         keywords: ["Tradition", "Spiritual Wisdom", "Institutions", "Mentorship"],
-        upright: {
-          meaning: "Honouring time-tested traditions, sacred rituals, and the council of venerable teachers. Aligning with an established lineage or community of shared ethical values.",
-          advice: "Seek counsel from proven masters and reflect on ancestral or philosophical wisdom that has endured centuries."
-        },
-        reversed: {
-          meaning: "Dogmatism, stifling orthodoxy, blind conformity, or forging a personal spiritual pathway outside dogma.",
-          advice: "Question inherited assumptions. Formulate your personal code of ethics rather than adhering to rote doctrine."
-        }
+        upright: { meaning: "Seeking guidance from established lineages, sacred ethics, and the wisdom of time-honoured institutions.", advice: "Consult teachers of proven integrity and anchor yourself in enduring values." },
+        reversed: { meaning: "Dogmatic servitude, outdated doctrines, or forging your own spiritual pathway.", advice: "Break free from hollow rituals; craft your authentic code of ethics." }
       },
       {
-        id: 6,
-        number: "VI",
-        roman: "VI",
-        name: "The Lovers",
-        icon: "heart",
-        symbolSvg: `<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>`,
-        keywords: ["Harmonious Union", "Values Alignment", "Duality", "Moral Choice"],
-        upright: {
-          meaning: "Profound soul resonance, conscious partnership, and the harmonious integration of inner opposites. A pivotal crossroads demanding dedication to one's core values.",
-          advice: "Choose that which ennobles your character. Love with transparency, honouring vulnerability alongside strength."
-        },
-        reversed: {
-          meaning: "Internal conflict, mismatched values, disharmony in partnerships, or choices made to appease external parties.",
-          advice: "Re-examine where your true allegiance lies. Harmony with others cannot exist without honesty with oneself."
-        }
+        id: "maj_6", suit: "Major", rank: "VI", name: "The Lovers", roman: "VI",
+        keywords: ["Harmonious Union", "Moral Choice", "Values", "Soul Connection"],
+        upright: { meaning: "Profound resonance of spirit, authentic partnership, and choices rooted in personal moral integrity.", advice: "Choose path and partner based on deep resonance with your highest principles." },
+        reversed: { meaning: "Disharmony, misaligned values, or choices made to satisfy external expectations.", advice: "Realign with self-honesty before committing your heart." }
       },
       {
-        id: 7,
-        number: "VII",
-        roman: "VII",
-        name: "The Chariot",
-        icon: "compass",
-        symbolSvg: `<circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>`,
-        keywords: ["Triumph", "Determination", "Willpower", "Focused Direction"],
-        upright: {
-          meaning: "Harnessing conflicting impulses into single-minded momentum. Victory achieved not by brute force, but through mastery of discipline and unwavering focus.",
-          advice: "Fix your gaze firmly upon your objective. Do not allow divergent moods or doubts to swerve your chariot off course."
-        },
-        reversed: {
-          meaning: "Loss of control, directionless aggression, collision with obstacles, or feeling dragged by circumstances.",
-          advice: "Pull in the reins. Restrain reckless haste and regain steady command before resuming speed."
-        }
+        id: "maj_7", suit: "Major", rank: "VII", name: "The Chariot", roman: "VII",
+        keywords: ["Triumph", "Determination", "Willpower", "Momentum"],
+        upright: { meaning: "Overcoming divergent forces through focused resolve. Victory won by steady composure and discipline.", advice: "Keep both eyes fixed upon your destination; do not allow emotional turbulence to derail you." },
+        reversed: { meaning: "Loss of control, directionless aggression, or being swept away by external pressure.", advice: "Pull on the reins and reassess your direction before speeding forward." }
       },
       {
-        id: 8,
-        number: "VIII",
-        roman: "VIII",
-        name: "Strength",
-        icon: "infinity",
-        symbolSvg: `<path d="M12 12c-2-2.67-4-4-6-4a4 4 0 1 0 0 8c2 0 4-1.33 6-4Zm0 0c2 2.67 4 4 6 4a4 4 0 0 0 0-8c-2 0-4 1.33-6 4Z"/>`,
+        id: "maj_8", suit: "Major", rank: "VIII", name: "Strength", roman: "VIII",
         keywords: ["Fortitude", "Gentle Mastery", "Patience", "Compassion"],
-        upright: {
-          meaning: "Subduing the beast not with iron chains, but with tenderness, patience, and fearless moral grace. Quiet endurance triumphs over explosive rage.",
-          advice: "Approach tense situations with softness and understanding. True strength lies in composed restraint and empathy."
-        },
-        reversed: {
-          meaning: "Self-doubt, surging raw temper, inner exhaustion, or vulnerability misinterpreted as weakness.",
-          advice: "Be gentle with your imperfections. Reconnect with self-respect; you are far stronger than your momentary insecurity."
-        }
+        upright: { meaning: "Taming primal instincts not through wrath, but with gentle, fearless grace and quiet endurance.", advice: "Lead with patience and kindness; gentleness disarms aggression where force fails." },
+        reversed: { meaning: "Self-doubt, surging anger, exhaustion, or feeling inadequate against life's demands.", advice: "Be gentle with your fragile human moments; reclaim faith in your quiet resilience." }
       },
       {
-        id: 9,
-        number: "IX",
-        roman: "IX",
-        name: "The Hermit",
-        icon: "flame",
-        symbolSvg: `<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>`,
-        keywords: ["Soul Searching", "Solitude", "Inner Lantern", "Guidance"],
-        upright: {
-          meaning: "Withdrawing deliberately into the sacred quiet to hold aloft the lantern of truth. Seeking clarity away from worldly clamour to uncover profound personal answers.",
-          advice: "Carve out sacred stillness. The solution you seek cannot be found in external chatter, but in quiet introspection."
-        },
-        reversed: {
-          meaning: "Isolation turning into bitter loneliness, withdrawal due to fear of the world, or ignoring wise inner guidance.",
-          advice: "Do not let solitude calcify into exile. It is time to step gently back into the warmth of connection."
-        }
+        id: "maj_9", suit: "Major", rank: "IX", name: "The Hermit", roman: "IX",
+        keywords: ["Solitude", "Soul Searching", "Inner Light", "Contemplation"],
+        upright: { meaning: "Withdrawing into peaceful retreat to hold aloft the lantern of truth and illuminate your personal path.", advice: "Seek quiet solitude. The essential answers are whispered within." },
+        reversed: { meaning: "Isolation turning into bitter loneliness, or refusing to reflect on recent experiences.", advice: "Step gently back towards warmth and fellowship." }
       },
       {
-        id: 10,
-        number: "X",
-        roman: "X",
-        name: "Wheel of Fortune",
-        icon: "sun-medium",
-        symbolSvg: `<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/>`,
-        keywords: ["Karma", "Cycles", "Destiny", "Turning Tides"],
-        upright: {
-          meaning: "The perpetual wheel turns. Fate smiles with serendipitous shifts, karmic elevation, and opportune breakthroughs. Life reminds us that all seasons are in perpetual flux.",
-          advice: "Welcome change with an open spirit. Adapt fluidly to current currents and seize the rising tide."
-        },
-        reversed: {
-          meaning: "Unforeseen setbacks, resisting the natural ebb and flow of life, or a temporary period of testing karma.",
-          advice: "Do not cling to that which is dissolving. Centre yourself in what is timeless; this cycle too shall pass."
-        }
+        id: "maj_10", suit: "Major", rank: "X", name: "Wheel of Fortune", roman: "X",
+        keywords: ["Cycles", "Destiny", "Turning Tide", "Karmic Shift"],
+        upright: { meaning: "The perpetual wheel turns. Opportune shifts, unexpected serendipity, and natural seasonal evolution.", advice: "Embrace change gracefully; adapt with optimism to rising tides." },
+        reversed: { meaning: "Unforeseen setbacks, bad luck, or resistance to unavoidable life cycles.", advice: "Find calm in your centre; this challenging turn of the wheel will also pass." }
       },
       {
-        id: 11,
-        number: "XI",
-        roman: "XI",
-        name: "Justice",
-        icon: "scale",
-        symbolSvg: `<path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>`,
+        id: "maj_11", suit: "Major", rank: "XI", name: "Justice", roman: "XI",
         keywords: ["Truth", "Fairness", "Cause & Effect", "Equilibrium"],
-        upright: {
-          meaning: "Impartial balance restored through objective truth. Actions harvest their natural outcomes with clear, mathematical clarity. Integrity is rewarded.",
-          advice: "Weigh your choices with impeccable honesty. Act ethically and accept responsibility with graceful equilibrium."
-        },
-        reversed: {
-          meaning: "Bias, dishonesty, evasion of accountability, or perceived unfair treatment by external systems.",
-          advice: "Search where you might be rationalising partial truths. Rectify imbalances within your personal conduct first."
-        }
+        upright: { meaning: "Equilibrium restored through impartial truth. Right action produces harmonious outcomes.", advice: "Act with impeccable fairness and accept accountability with dignified grace." },
+        reversed: { meaning: "Unfairness, evasion of responsibility, prejudice, or harsh self-judgement.", advice: "Examine personal biases; make restitution where you have erred." }
       },
       {
-        id: 12,
-        number: "XII",
-        roman: "XII",
-        name: "The Hanged Man",
-        icon: "anchor",
-        symbolSvg: `<circle cx="12" cy="5" r="3"/><line x1="12" y1="22" x2="12" y2="8"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/>`,
-        keywords: ["Surrender", "New Perspective", "Sacred Pause", "Letting Go"],
-        upright: {
-          meaning: "A voluntary suspension of action. In releasing the struggle to force an outcome, enlightenment emerges. The world inverted reveals profound hidden understandings.",
-          advice: "Surrender the need to control. Practice patient stillness; a paradigm shift is quietly unfolding."
-        },
-        reversed: {
-          meaning: "Martyrdom, pointless stubbornness, stagnation masquerading as patience, or resisting necessary sacrifice.",
-          advice: "Cease waiting passively if sacrifice yields no spiritual fruit. Cut the rope and resume dynamic movement."
-        }
+        id: "maj_12", suit: "Major", rank: "XII", name: "The Hanged Man", roman: "XII",
+        keywords: ["Surrender", "New Perspective", "Sacred Pause", "Release"],
+        upright: { meaning: "Suspension of struggle. Surrendering control reveals surprising perspectives and spiritual clarity.", advice: "Cease forcing outcomes. Empathic stillness unlocks the deadlock." },
+        reversed: { meaning: "Fruitless martyrdom, unnecessary stalling, or resistance to unavoidable surrender.", advice: "Cut the cords of self-imposed delay; resume active participation." }
       },
       {
-        id: 13,
-        number: "XIII",
-        roman: "XIII",
-        name: "Death",
-        icon: "hourglass",
-        symbolSvg: `<path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/>`,
-        keywords: ["Transformation", "Endings", "Metamorphosis", "Clearing Space"],
-        upright: {
-          meaning: "The inevitable closing of a chapter to enable radiant rebirth. Shedding old skins, attachments, and structures that can no longer sustain your evolving soul.",
-          advice: "Release the past without sorrow. Mourn what was, then celebrate the clean soil ready for new seeds."
-        },
-        reversed: {
-          meaning: "Clinging to dead habits, fear of profound transformation, or lingering in decay out of dread of the unfamiliar.",
-          advice: "Resistance only multiplies pain. Trust that what is departing has fulfilled its sacred purpose."
-        }
+        id: "maj_13", suit: "Major", rank: "XIII", name: "Death", roman: "XIII",
+        keywords: ["Transformation", "Endings", "Rebirth", "Metamorphosis"],
+        upright: { meaning: "The natural conclusion of an outgrown phase. What decays fertilises glorious new beginnings.", advice: "Release the past without fear; allow dead leaves to fall gracefully." },
+        reversed: { meaning: "Clinging to decayed situations, dread of change, or prolonged stagnation.", advice: "Do not fight transformation. Resistance only prolongs discomfort." }
       },
       {
-        id: 14,
-        number: "XIV",
-        roman: "XIV",
-        name: "Temperance",
-        icon: "droplet",
-        symbolSvg: `<path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/>`,
-        keywords: ["Alchemy", "Balance", "Patience", "Divine Moderation"],
-        upright: {
-          meaning: "The gentle blending of divergent opposites into harmonious alchemy. Moderation, emotional peace, and the calm middle pathway that heals and transcends extremes.",
-          advice: "Practice measured composure. Synthesis, compromise, and gentle cadence will bring lasting resolution."
-        },
-        reversed: {
-          meaning: "Excess, disharmonious friction, impatience, or swinging wildly between conflicting polarities.",
-          advice: "Step back from excessive stimulants, arguments, or extremes. Restore quiet equilibrium to body and mind."
-        }
+        id: "maj_14", suit: "Major", rank: "XIV", name: "Temperance", roman: "XIV",
+        keywords: ["Alchemy", "Balance", "Moderation", "Patient Healing"],
+        upright: { meaning: "Blending opposites into a higher synthesis. Tranquil moderation and inner emotional equilibrium.", advice: "Walk the golden middle path; cultivate patience and measured cadence." },
+        reversed: { meaning: "Imbalance, extremes, excess, or conflicting emotional volatility.", advice: "Step back from stimulants and arguments; restore steady balance." }
       },
       {
-        id: 15,
-        number: "XV",
-        roman: "XV",
-        name: "The Devil",
-        icon: "flame",
-        symbolSvg: `<path d="M12 2c2 3.5 6 6 6 11a6 6 0 0 1-12 0c0-5 4-7.5 6-11z"/><path d="M12 15a2 2 0 0 0 2-2c0-1.5-1-2.5-2-3.5-1 1-2 2-2 3.5a2 2 0 0 0 2 2z"/>`,
-        keywords: ["Shadow Self", "Entrapment", "Material Illusion", "Liberation"],
-        upright: {
-          meaning: "Confronting unhealthy attachments, compulsive patterns, or illusions that you are powerless. The chains around the neck are loose enough to be lifted off at will.",
-          advice: "Recognise where you have given your power away to addiction, toxic habits, or fear. Claim your freedom."
-        },
-        reversed: {
-          meaning: "Awakening from delusion, breaking self-imposed bondage, facing the shadow, and stepping into sovereign reclamation.",
-          advice: "Shatter the remaining illusions. You are crossing the threshold into empowered self-mastery."
-        }
+        id: "maj_15", suit: "Major", rank: "XV", name: "The Devil", roman: "XV",
+        keywords: ["Shadow Self", "Attachments", "Illusion", "Material Bondage"],
+        upright: { meaning: "Confronting unhealthy dependencies, compulsive habits, and self-limiting beliefs.", advice: "Recognise that the chains binding you are self-imposed; you can slip them off at will." },
+        reversed: { meaning: "Breaking toxic cycles, reclaiming autonomy, and awakening from material illusions.", advice: "Claim your freedom and step out of the shadows into sovereign daylight." }
       },
       {
-        id: 16,
-        number: "XVI",
-        roman: "XVI",
-        name: "The Tower",
-        icon: "zap",
-        symbolSvg: `<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>`,
-        keywords: ["Sudden Awakening", "Upheaval", "Revelation", "Breakdown of Illusion"],
-        upright: {
-          meaning: "Lightning strikes the ivory tower built on false premises. Whilst sudden and disorienting, this divine rupture shatters falsehoods so truth can reign free.",
-          advice: "Do not attempt to glue crumbling illusions back together. Let the debris fall; clarity and liberation lie ahead."
-        },
-        reversed: {
-          meaning: "Disaster narrowly averted, delaying unavoidable collapse, or clinging stubbornly to fundamentally broken realities.",
-          advice: "Allow the necessary demolition to take place. Postponing truth only lengthens your anxiety."
-        }
+        id: "maj_16", suit: "Major", rank: "XVI", name: "The Tower", roman: "XVI",
+        keywords: ["Upheaval", "Revelation", "Shattered Illusions", "Awakening"],
+        upright: { meaning: "Sudden rupture shatters brittle foundations built upon falsehoods, liberating authentic truth.", advice: "Do not despair over the ruins; rebuilding upon genuine stone begins now." },
+        reversed: { meaning: "Disaster narrowly averted, delaying unavoidable collapse, or clinging to broken structures.", advice: "Allow the crumbling facade to fall; truth is your salvation." }
       },
       {
-        id: 17,
-        number: "XVII",
-        roman: "XVII",
-        name: "The Star",
-        icon: "star",
-        symbolSvg: `<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>`,
-        keywords: ["Hope", "Faith", "Inspiration", "Serene Renewal"],
-        upright: {
-          meaning: "After the tempest, celestial calm. A shining beacon of crystal hope, healing waters, and restored spiritual faith. Blessings flow with gentle, restorative radiance.",
-          advice: "Open your heart to hope once more. Trust in the benevolent orchestration of your destiny."
-        },
-        reversed: {
-          meaning: "Despair, temporary loss of faith, feeling uninspired, or doubting one's worthiness of grace.",
-          advice: "Look up through the darkness. The stars have not ceased shining; lift your eyes above current fatigue."
-        }
+        id: "maj_17", suit: "Major", rank: "XVII", name: "The Star", roman: "XVII",
+        keywords: ["Hope", "Serene Renewal", "Inspiration", "Divine Grace"],
+        upright: { meaning: "A calming balm for the weary soul. Renewed faith, healing waters, and tranquil cosmic guidance.", advice: "Open your spirit to renewed hope; you are held by gentle, benevolent forces." },
+        reversed: { meaning: "Hopelessness, spiritual fatigue, pessimism, or feeling disconnected from grace.", advice: "Lift your gaze to the celestial horizon; light remains intact." }
       },
       {
-        id: 18,
-        number: "XVIII",
-        roman: "XVIII",
-        name: "The Moon",
-        icon: "moon-star",
-        symbolSvg: `<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/><path d="M19 3v4"/><path d="M21 5h-4"/>`,
-        keywords: ["Illusion", "The Unconscious", "Dreams", "Navigating Fog"],
-        upright: {
-          meaning: "A landscape lit only by moonbeams where shadows distort truth. Primal instincts, vivid dreams, and ancient fears arise. Things are rarely as they first appear.",
-          advice: "Do not make hasty, permanent decisions amidst psychological fog. Walk gently along the path until morning arrives."
-        },
-        reversed: {
-          meaning: "Unveiling deception, release of deep-seated phobias, truth emerging from shadows, and mental clarity returning.",
-          advice: "Celebrate the dawn breaking over anxious illusions. Trust the emerging clarity."
-        }
+        id: "maj_18", suit: "Major", rank: "XVIII", name: "The Moon", roman: "XVIII",
+        keywords: ["Illusion", "The Subconscious", "Dreams", "Hidden Depths"],
+        upright: { meaning: "Navigating nocturnal mist where fears cast towering shadows. Things are not entirely as they seem.", advice: "Rely upon your subtle instincts; postpone binding contracts until morning sun clarifies." },
+        reversed: { meaning: "Unveiling deceit, banishing irrational phobias, and emerging from mental fog.", advice: "Rejoice in returning clarity; truth is illuminating the shadows." }
       },
       {
-        id: 19,
-        number: "XIX",
-        roman: "XIX",
-        name: "The Sun",
-        icon: "sun",
-        symbolSvg: `<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>`,
-        keywords: ["Joy", "Vitality", "Radiance", "Unconditional Success"],
-        upright: {
-          meaning: "Magnificent illumination, exuberant vitality, and unabashed joy. Clouds disperse entirely as warmth invigorates every facet of your life. Success is celebrated in open daylight.",
-          advice: "Shine your light without apology. Share warmth, laughter, and confidence with all who cross your path."
-        },
-        reversed: {
-          meaning: "Clouded optimism, temporary exhaustion, delayed celebration, or struggling to see the abundant silver lining.",
-          advice: "The sun remains radiant above temporary overcast clouds. Reconnect with playful simplicity and recharge."
-        }
+        id: "maj_19", suit: "Major", rank: "XIX", name: "The Sun", roman: "XIX",
+        keywords: ["Radiance", "Joy", "Vitality", "Unclouded Success"],
+        upright: { meaning: "Glorious vitality, warm celebrations, and crystal clarity. Success flourishes in open day.", advice: "Shine your light freely and share cheerful warmth with all." },
+        reversed: { meaning: "Clouded optimism, temporary fatigue, or difficulty appreciating present blessings.", advice: "The sun still burns brilliantly above the clouds; tend your childlike joy." }
       },
       {
-        id: 20,
-        number: "XX",
-        roman: "XX",
-        name: "Judgement",
-        icon: "bell",
-        symbolSvg: `<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>`,
+        id: "maj_20", suit: "Major", rank: "XX", name: "Judgement", roman: "XX",
         keywords: ["Reckoning", "Awakening", "Higher Calling", "Absolution"],
-        upright: {
-          meaning: "The celestial horn resounds. A moment of profound self-reckoning and spiritual awakening. The past is forgiven and integrated, summoning you to step into a higher life mission.",
-          advice: "Answer the call without hesitation. Forgive past shortcomings and rise into your renewed existence."
-        },
-        reversed: {
-          meaning: "Harsh self-criticism, ignoring the inner clarion call, clinging to ancient regrets, or refusal to forgive.",
-          advice: "Release self-condemnation. You cannot step into your higher evolution whilst holding trials against yourself."
-        }
+        upright: { meaning: "The celestial horn sounds. Reconciling past experiences and stepping into a noble life purpose.", advice: "Forgive past errors and heed the call to your higher evolution." },
+        reversed: { meaning: "Harsh self-reproach, ignoring your life calling, or dwelling on ancient regrets.", advice: "Grant yourself absolution; you cannot step forward looking backward." }
       },
       {
-        id: 21,
-        number: "XXI",
-        roman: "XXI",
-        name: "The World",
-        icon: "globe",
-        symbolSvg: `<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/>`,
-        keywords: ["Completion", "Integration", "Wholeness", "Cosmic Accomplishment"],
-        upright: {
-          meaning: "The grand cycle completes in wholeness and triumph. An integrated understanding of life's lessons brings inner peace and expansive belonging in the universe.",
-          advice: "Honour your journey and celebrate your milestone. Stand whole, grateful, and prepare for the next spiraling dance."
-        },
-        reversed: {
-          meaning: "Lack of closure, lingering loose ends, postponing a triumphant finish, or seeking completion purely from external accolades.",
-          advice: "Tie up the final threads. Closure is a gift you give yourself through gratitude and self-recognition."
-        }
+        id: "maj_21", suit: "Major", rank: "XXI", name: "The World", roman: "XXI",
+        keywords: ["Completion", "Integration", "Wholeness", "Cosmic Fulfillment"],
+        upright: { meaning: "A momentous cycle closes in triumph and wholeness. Inner and outer worlds rest in harmony.", advice: "Celebrate your accomplishments with gratitude; you stand complete and ready for new horizons." },
+        reversed: { meaning: "Lack of closure, lingering loose ends, or seeking external validation for completion.", advice: "Tie up remaining details and grant yourself closure." }
+      },
+
+      /* --- 14 SUIT OF WANDS (Fire, Passion, Enterprise, Will) --- */
+      {
+        id: "wan_1", suit: "Wands", rank: "Ace", name: "Ace of Wands", roman: "I",
+        keywords: ["Creative Spark", "Inspiration", "New Enterprise", "Vitality"],
+        upright: { meaning: "A potent burst of creative and entrepreneurial enthusiasm. The seed of a thrilling venture takes root.", advice: "Seize this energetic momentum; ignite your ideas into action." },
+        reversed: { meaning: "Delays, lack of creative direction, creative block, or premature hesitation.", advice: "Fan the spark quietly; clarify your vision before striking." }
+      },
+      {
+        id: "wan_2", suit: "Wands", rank: "Two", name: "Two of Wands", roman: "II",
+        keywords: ["Planning", "Future Horizons", "Decisions", "Discovery"],
+        upright: { meaning: "Holding the world in your hands whilst plotting the next conquest. Moving from concept to structured strategy.", advice: "Plan with grand vision; step outside familiar comfort zones." },
+        reversed: { meaning: "Fear of stepping into unknown territories, poor planning, or feeling constrained.", advice: "Do not let anxiety keep you tethered to safe shores." }
+      },
+      {
+        id: "wan_3", suit: "Wands", rank: "Three", name: "Three of Wands", roman: "III",
+        keywords: ["Expansion", "Foresight", "Overseas Enterprise", "Progress"],
+        upright: { meaning: "Your ships have launched and initial returns appear upon the horizon. Bold expansion and confident anticipation.", advice: "Maintain vigilance and prepare your ports to welcome burgeoning opportunities." },
+        reversed: { meaning: "Delayed returns, frustration with progress, or unexpected trade barriers.", advice: "Exercise patient persistence; seeds planted take time to mature." }
+      },
+      {
+        id: "wan_4", suit: "Wands", rank: "Four", name: "Four of Wands", roman: "IV",
+        keywords: ["Celebration", "Homecoming", "Harmony", "Community"],
+        upright: { meaning: "Joyous homecoming, milestones celebrated, and solid domestic foundations filled with camaraderie.", advice: "Pause to revel in fellowship; honour achievements with those you cherish." },
+        reversed: { meaning: "Tension within the household, delayed celebration, or feeling unwelcome.", advice: "Mend domestic rifts with warmth and inclusive hospitality." }
+      },
+      {
+        id: "wan_5", suit: "Wands", rank: "Five", name: "Five of Wands", roman: "V",
+        keywords: ["Competition", "Conflict", "Rivalry", "Diverse Ideas"],
+        upright: { meaning: "Spirited clashes of differing perspectives, competitive skirmishes, and energetic friction.", advice: "Listen beneath the noise; healthy competition sharpens your edge." },
+        reversed: { meaning: "Avoidance of conflict, bitter escalation, or exhaustion from petty disagreements.", advice: "Seek common ground; decline battles that yield no noble victory." }
+      },
+      {
+        id: "wan_6", suit: "Wands", rank: "Six", name: "Six of Wands", roman: "VI",
+        keywords: ["Public Triumph", "Recognition", "Acclaim", "Confidence"],
+        upright: { meaning: "Riding high in well-deserved victory. Your perseverance is acknowledged and acclaimed publicly.", advice: "Accept praise with gracious humility; let your triumph inspire others." },
+        reversed: { meaning: "Fall from grace, unrecognised merit, imposter syndrome, or arrogance.", advice: "Rebuild confidence from inside; do not tie your self-worth solely to applause." }
+      },
+      {
+        id: "wan_7", suit: "Wands", rank: "Seven", name: "Seven of Wands", roman: "VII",
+        keywords: ["Defending Conviction", "Perseverance", "Standing Ground", "Courage"],
+        upright: { meaning: "Holding the high ground against competitive pressures. Standing resolute for what you know to be righteous.", advice: "Stand firm in your convictions; do not capitulate to intimidation." },
+        reversed: { meaning: "Overwhelmed by opposition, exhaustion, giving up too easily, or defensiveness.", advice: "Choose your battles; reserve energy for essential principles." }
+      },
+      {
+        id: "wan_8", suit: "Wands", rank: "Eight", name: "Eight of Wands", roman: "VIII",
+        keywords: ["Swift Pace", "Rapid News", "Momentum", "Alignment"],
+        upright: { meaning: "Events accelerating with whirlwind velocity. Communications fly swiftly; obstacles clear out of the path.", advice: "Act promptly and ride the current; delays now will cause you to miss the crest." },
+        reversed: { meaning: "Hasty errors, miscommunication, delays in travel, or feeling panicky.", advice: "Slow your breathing; ensure precision before launching communications." }
+      },
+      {
+        id: "wan_9", suit: "Wands", rank: "Nine", name: "Nine of Wands", roman: "IX",
+        keywords: ["Resilience", "Grit", "Final Defence", "Vigilance"],
+        upright: { meaning: "Weary and battle-scarred yet unbroken. One final effort remains to secure safety and triumph.", advice: "Summon your deepest reserves; victory is closer than fatigue permits you to realise." },
+        reversed: { meaning: "Paranoia, burnout, chronic defensiveness, or surrender at the eleventh hour.", advice: "Rest your weary limbs; not everyone approaching is an enemy." }
+      },
+      {
+        id: "wan_10", suit: "Wands", rank: "Ten", name: "Ten of Wands", roman: "X",
+        keywords: ["Burden", "Overload", "Hard Labour", "Duty"],
+        upright: { meaning: "Carrying a crushing pile of responsibilities. Success has bred over-commitment and strain.", advice: "Delegate tasks; you need not shoulder the burdens of the world single-handedly." },
+        reversed: { meaning: "Collapse under burden, letting go of unsustainable loads, or refusal to ask for help.", advice: "Put down the heaviest logs; simplify before exhaustion claims you." }
+      },
+      {
+        id: "wan_11", suit: "Wands", rank: "Page", name: "Page of Wands", roman: "XI",
+        keywords: ["Enthusiastic Messenger", "Exploration", "Curiosity", "Fresh Idea"],
+        upright: { meaning: "An eager soul bearing exciting invitations or messages of adventure. Curious and brimming with youthful energy.", advice: "Embrace creative exploration; test ideas with lively enthusiasm." },
+        reversed: { meaning: "Procrastination, unreliable news, childish tantrums, or lack of discipline.", advice: "Turn enthusiasm into disciplined follow-through." }
+      },
+      {
+        id: "wan_12", suit: "Wands", rank: "Knight", name: "Knight of Wands", roman: "XII",
+        keywords: ["Daring", "Action-Oriented", "Passion", "Restlessness"],
+        upright: { meaning: "Charging boldly into uncharted adventures. Charismatic, daring, and brimming with unquenchable fire.", advice: "Pursue your goals with audacious zeal, but do not burn bridges in haste." },
+        reversed: { meaning: "Reckless impetuousness, volatile temper, starting without finishing, or arrogance.", advice: "Temper passion with foresight; haste invites clumsy pitfalls." }
+      },
+      {
+        id: "wan_13", suit: "Wands", rank: "Queen", name: "Queen of Wands", roman: "XIII",
+        keywords: ["Radiant Confidence", "Warmth", "Charisma", "Fierce Independence"],
+        upright: { meaning: "A magnetic, warm presence radiating self-assurance. Creative, courageous, and inspiring devotion.", advice: "Own your radiance unapologetically; inspire others through bold authenticity." },
+        reversed: { meaning: "Jealousy, vindictiveness, insecurity masked as temper, or feeling ignored.", advice: "Reclaim your inner glow; there is room in the heavens for all stars to shine." }
+      },
+      {
+        id: "wan_14", suit: "Wands", rank: "King", name: "King of Wands", roman: "XIV",
+        keywords: ["Visionary Leader", "Enterprising", "Inspiration", "Noble Will"],
+        upright: { meaning: "A visionary ruler who turns audacious dreams into enduring institutions. Natural command and inspiring enterprise.", advice: "Lead by bold example; align collective effort towards an ennobling vision." },
+        reversed: { meaning: "Autocratic behaviour, unrealistic demands, overbearing domineering, or impatience.", advice: "Rule with magnanimity; respect the contributions of those you lead." }
+      },
+
+      /* --- 14 SUIT OF CUPS (Water, Emotion, Love, Intuition) --- */
+      {
+        id: "cup_1", suit: "Cups", rank: "Ace", name: "Ace of Cups", roman: "I",
+        keywords: ["Emotional Awakening", "Overflowing Love", "Compassion", "Grace"],
+        upright: { meaning: "An overflowing chalice of spiritual grace, compassionate love, and profound heart connection.", advice: "Open your heart freely; welcome love and allow empathy to heal." },
+        reversed: { meaning: "Repressed emotions, blocked creativity, emotional draining, or guarded heart.", advice: "Tend to emotional wounds before seeking external affection." }
+      },
+      {
+        id: "cup_2", suit: "Cups", rank: "Two", name: "Two of Cups", roman: "II",
+        keywords: ["Soul Partnership", "Mutual Regard", "Harmonious Union", "Affection"],
+        upright: { meaning: "A meeting of minds and tender hearts. Mutual respect, emotional equality, and blessed bonding.", advice: "Foster reciprocal care; honour agreements based upon authentic goodwill." },
+        reversed: { meaning: "Broken rapport, misunderstanding, imbalance in giving, or codependency.", advice: "Communicate with unvarnished vulnerability to restore equilibrium." }
+      },
+      {
+        id: "cup_3", suit: "Cups", rank: "Three", name: "Three of Cups", roman: "III",
+        keywords: ["Celebration", "Friendship", "Sisterhood", "Collaborative Joy"],
+        upright: { meaning: "Raising goblets in shared happiness. Warm social circles, creative collaboration, and sweet merriment.", advice: "Celebrate the blessings of companionship; nurture friendships that nourish." },
+        reversed: { meaning: "Gossip, excluded feelings, overindulgence, or third-party interference.", advice: "Step back from toxic social drama; seek genuine company." }
+      },
+      {
+        id: "cup_4", suit: "Cups", rank: "Four", name: "Four of Cups", roman: "IV",
+        keywords: ["Apathy", "Contemplation", "Overlooked Gift", "Discontent"],
+        upright: { meaning: "Brooding beneath a tree, blind to the celestial cup proffered from the heavens. Boredom and discontent.", advice: "Open your eyes to understated blessings; break free from melancholy rumination." },
+        reversed: { meaning: "Snapping out of apathy, accepting opportunities, and emotional revival.", advice: "Seize the offered cup; renewed inspiration is awaiting your response." }
+      },
+      {
+        id: "cup_5", suit: "Cups", rank: "Five", name: "Five of Cups", roman: "V",
+        keywords: ["Grief", "Regret", "Shedding Tears", "Preserved Hope"],
+        upright: { meaning: "Mourning over three spilled goblets whilst failing to observe the two remaining intact behind you.", advice: "Acknowledge sorrow, then turn around; precious love and hope remain intact." },
+        reversed: { meaning: "Healing from grief, forgiving the past, emotional acceptance, and moving forward.", advice: "Pick up what remains; you are prepared to cross the bridge into healing." }
+      },
+      {
+        id: "cup_6", suit: "Cups", rank: "Six", name: "Six of Cups", roman: "VI",
+        keywords: ["Nostalgia", "Sweet Memories", "Innocence", "Reunion"],
+        upright: { meaning: "A fragrant garden of innocent childhood memories, gentle reunions, and pure goodwill.", advice: "Draw strength from the purity of past lessons; give with pure, unconditional heart." },
+        reversed: { meaning: "Clinging to rose-tinted pasts, refusing to grow up, or unresolved childhood wounds.", advice: "Cherish memories without allowing nostalgia to stall your present." }
+      },
+      {
+        id: "cup_7", suit: "Cups", rank: "Seven", name: "Seven of Cups", roman: "VII",
+        keywords: ["Illusion", "Daydreaming", "Tempting Choices", "Wishful Thinking"],
+        upright: { meaning: "A myriad of gleaming options floating on clouds. Some hold jewels, others venomous snakes.", advice: "Separate fantasy from reality; clarify practical priorities before committing." },
+        reversed: { meaning: "Disillusionment, clarity after confusion, and disciplined decision making.", advice: "Focus on the singular path of substantive truth; leave illusions behind." }
+      },
+      {
+        id: "cup_8", suit: "Cups", rank: "Eight", name: "Eight of Cups", roman: "VIII",
+        keywords: ["Walking Away", "Deeper Quest", "Spiritual Departure", "Letting Go"],
+        upright: { meaning: "Turning your back on hollow achievements to ascend the mountain in search of deeper soul meaning.", advice: "Have the courage to walk away from situations that no longer nourish your spirit." },
+        reversed: { meaning: "Clinging to dead arrangements, fear of leaving, aimless wandering, or returning to toxicity.", advice: "Do not let guilt tether you to what has run its spiritual course." }
+      },
+      {
+        id: "cup_9", suit: "Cups", rank: "Nine", name: "Nine of Cups", roman: "IX",
+        keywords: ["Wish Fulfillment", "Contentment", "Satisfaction", "Delight"],
+        upright: { meaning: "The 'Wish Card'. Plentiful emotional contentment, sensory satisfaction, and genuine delight.", advice: "Savour your blessings with heartfelt gratitude; your heart's desire aligns." },
+        reversed: { meaning: "Smug complacency, overindulgence, superficial desires, or unfulfilled hopes.", advice: "Look beyond material gluttony; true happiness resides in the soul." }
+      },
+      {
+        id: "cup_10", suit: "Cups", rank: "Ten", name: "Ten of Cups", roman: "X",
+        keywords: ["Divine Harmony", "Blissful Family", "Enduring Peace", "Fulfillment"],
+        upright: { meaning: "A celestial rainbow shining over a happy home. Emotional completeness, peace, and domestic blessing.", advice: "Cultivate lasting peace in your inner sanctum; appreciate your loved ones." },
+        reversed: { meaning: "Family discord, shattered ideals, strained relationships, or values friction.", advice: "Work diligently to mend bonds; empathy bridges the deepest divides." }
+      },
+      {
+        id: "cup_11", suit: "Cups", rank: "Page", name: "Page of Cups", roman: "XI",
+        keywords: ["Intuitive Messenger", "Poetic Heart", "Curious Emotion", "Dreamer"],
+        upright: { meaning: "A gentle soul looking into a cup from which a curious fish emerges. Surprise emotional messages and poetry.", advice: "Remain open to synchronicity, gentle intuitions, and creative inspiration." },
+        reversed: { meaning: "Emotional immaturity, hypersensitivity, moody drama, or escapism.", advice: "Ground emotional sensitivity with practical maturity." }
+      },
+      {
+        id: "cup_12", suit: "Cups", rank: "Knight", name: "Knight of Cups", roman: "XII",
+        keywords: ["Romantic Herald", "Idealism", "Poetic Charm", "Follow Your Heart"],
+        upright: { meaning: "An elegant knight carrying a proffered chalice of love. Romantic, idealistic, and deeply imaginative.", advice: "Follow the promptings of your heart with chivalry and refined compassion." },
+        reversed: { meaning: "Fickle affection, moodiness, unrealistic fantasies, or manipulation through charm.", advice: "Anchor dreams in reality; avoid wearing rose-tinted glasses." }
+      },
+      {
+        id: "cup_13", suit: "Cups", rank: "Queen", name: "Queen of Cups", roman: "XIII",
+        keywords: ["Deep Empathy", "Intuitive Wisdom", "Compassion", "Emotional Sanctuary"],
+        upright: { meaning: "A serene queen gazing into an ornate vessel. Supreme emotional attunement, healing presence, and empathy.", advice: "Trust your emotional radar; provide a sanctuary of compassionate understanding." },
+        reversed: { meaning: "Codependency, emotional smothering, mood swings, or feeling drained by others.", advice: "Maintain clean emotional boundaries; protect your peace." }
+      },
+      {
+        id: "cup_14", suit: "Cups", rank: "King", name: "King of Cups", roman: "XIV",
+        keywords: ["Emotional Mastery", "Calm Counsel", "Balance", "Diplomacy"],
+        upright: { meaning: "A sovereign riding above stormy seas with steadfast inner calm. Wisdom, emotional restraint, and diplomacy.", advice: "Navigate current storms with emotional maturity, measured wisdom, and kindness." },
+        reversed: { meaning: "Emotional volatility, cold manipulation, vindictiveness, or suppressed feelings.", advice: "Master your internal tides; do not allow wounded pride to guide you." }
+      },
+
+      /* --- 14 SUIT OF SWORDS (Air, Intellect, Truth, Conflict, Mind) --- */
+      {
+        id: "swo_1", suit: "Swords", rank: "Ace", name: "Ace of Swords", roman: "I",
+        keywords: ["Mental Clarity", "Piercing Truth", "Breakthrough", "Sharp Insight"],
+        upright: { meaning: "The double-edged sword cuts through confusion. A sudden, piercing breakthrough of pristine clarity and truth.", advice: "Speak the truth with fearless clarity, but wield mental power ethically." },
+        reversed: { meaning: "Mental confusion, sharp hostility, skewed perception, or brutal bluntness.", advice: "Sheathe anger; wait for mental turbulence to settle before concluding." }
+      },
+      {
+        id: "swo_2", suit: "Swords", rank: "Two", name: "Two of Swords", roman: "II",
+        keywords: ["Stalemate", "Blindfolded Choice", "Truce", "Avoided Reality"],
+        upright: { meaning: "Blindfolded with crossed blades, refusing to look upon uncomfortable reality. Stalemate demanding choice.", advice: "Remove the blindfold; difficult decisions cannot be dodged forever." },
+        reversed: { meaning: "Indecision resolved, seeing the truth, information revealed, or overwhelmed mind.", advice: "Trust your inner compass and choose the courageous direction." }
+      },
+      {
+        id: "swo_3", suit: "Swords", rank: "Three", name: "Three of Swords", roman: "III",
+        keywords: ["Heartbreak", "Painful Truth", "Grief", "Sorrow"],
+        upright: { meaning: "Three swords pierce a weeping heart beneath torrential storm clouds. Sorrow, heartbreak, and poignant clarity.", advice: "Allow yourself to grieve clean tears; sorrow released allows deep healing to begin." },
+        reversed: { meaning: "Healing from grief, forgiveness, releasing bitter grudges, and recovery.", advice: "Open your heart again; the storm is finally breaking." }
+      },
+      {
+        id: "swo_4", suit: "Swords", rank: "Four", name: "Four of Swords", roman: "IV",
+        keywords: ["Sanctuary", "Rest", "Mental Recuperation", "Stillness"],
+        upright: { meaning: "Lying in peaceful contemplation within a quiet sanctuary. A crucial rest from mental conflict.", advice: "Take a step back into stillness; recharge your mental and nervous stamina." },
+        reversed: { meaning: "Restlessness, exhaustion from avoiding rest, forced recovery, or returning to action.", advice: "Do not rush back into fray prematurely; heal fully first." }
+      },
+      {
+        id: "swo_5", suit: "Swords", rank: "Five", name: "Five of Swords", roman: "V",
+        keywords: ["Hollow Victory", "Dishonour", "Conflict", "Pyrrhic Win"],
+        upright: { meaning: "Winning an argument at the cost of the relationship. Smug triumph that leaves a bitter aftertaste.", advice: "Ask whether winning this battle is worth losing your honour and fellowship." },
+        reversed: { meaning: "Desire to end conflict, reconciling after fight, remorse, or moving beyond grudges.", advice: "Lay down your weapons; seek peace over ego gratification." }
+      },
+      {
+        id: "swo_6", suit: "Swords", rank: "Six", name: "Six of Swords", roman: "VI",
+        keywords: ["Transition", "Calmer Waters", "Leaving Trouble", "Passage"],
+        upright: { meaning: "Ferrying towards calmer shores away from troubled waters. Mental transition and gentle relief.", advice: "Leave past discord behind; smooth sailing awaits ahead." },
+        reversed: { meaning: "Carrying emotional baggage, resisting relocation, stormy transitions, or delays.", advice: "Release baggage weighing down the vessel; trust the transit." }
+      },
+      {
+        id: "swo_7", suit: "Swords", rank: "Seven", name: "Seven of Swords", roman: "VII",
+        keywords: ["Stealth", "Strategy", "Deception", "Evasion"],
+        upright: { meaning: "Sneaking away from the camp with armfuls of swords. Resourceful cunning, tactical evasion, or stealth.", advice: "Rely upon discretion and clever strategy rather than blunt confrontation." },
+        reversed: { meaning: "Confessing secrets, truth discovered, failed deceit, or breaking out of imposter syndrome.", advice: "Drop secretive pretences; transparent honesty clears the air." }
+      },
+      {
+        id: "swo_8", suit: "Swords", rank: "Eight", name: "Eight of Swords", roman: "VIII",
+        keywords: ["Self-Imposed Prison", "Limitation", "Victim Mentality", "Entrapment"],
+        upright: { meaning: "Blindfolded and loosely bound amidst swords. The entrapment is maintained primarily by beliefs, not reality.", advice: "Step through the loose cords; you are far freer than your anxious mind assumes." },
+        reversed: { meaning: "Freedom, shedding mental constraints, reclaiming personal power, and clarity.", advice: "Take off the blindfold and stride freely into empowerment." }
+      },
+      {
+        id: "swo_9", suit: "Swords", rank: "Nine", name: "Nine of Swords", roman: "IX",
+        keywords: ["Anxiety", "Nightmares", "Anguish", "Overthinking"],
+        upright: { meaning: "Waking in the dead of night with head in hands. Towering anxieties, nightmares, and mental anguish.", advice: "Remember that nocturnal phantoms diminish under dawn's light; speak your worries aloud." },
+        reversed: { meaning: "Releasing worry, seeking help, dawn breaking on depression, and healing.", advice: "Breathe gently; the worst of the imagined scenario has passed." }
+      },
+      {
+        id: "swo_10", suit: "Swords", rank: "Ten", name: "Ten of Swords", roman: "X",
+        keywords: ["Rock Bottom", "Final Ending", "Dawn Ahead", "Inevitable Release"],
+        upright: { meaning: "Lying pinned to the ground with ten swords in the back. The ultimate painful end, yet the dawn is rising on the horizon.", advice: "Accept that this situation is truly over; you can now only ascend." },
+        reversed: { meaning: "Surviving catastrophe, slow healing, fear of relapse, and rising anew.", advice: "You have survived the worst; begin the upward climb into fresh life." }
+      },
+      {
+        id: "swo_11", suit: "Swords", rank: "Page", name: "Page of Swords", roman: "XI",
+        keywords: ["Inquisitive Mind", "Mental Agility", "Vigilance", "Truth-Seeker"],
+        upright: { meaning: "A youthful mind clutching a drawn sword with alert eyes. Quick intellect, inquisitive curiosity, and debate.", advice: "Stay mentally alert and question assertions; verify truths independently." },
+        reversed: { meaning: "Spiteful gossip, petty paranoia, all talk and no action, or sharp tongue.", advice: "Speak with constructive charity; avoid malicious cynicism." }
+      },
+      {
+        id: "swo_12", suit: "Swords", rank: "Knight", name: "Knight of Swords", roman: "XII",
+        keywords: ["Decisive Action", "Intellectual Rush", "Fierce Drive", "Directness"],
+        upright: { meaning: "Charging heedlessly into the wind with blade aloft. Razor-sharp intellect, fierce determination, and directness.", advice: "Strike with decisive speed, but take care not to trample innocent feelings." },
+        reversed: { meaning: "Reckless arrogance, hurtful aggression, arguing for argument's sake, or burnout.", advice: "Calm your mental charge; intellectual bravado is no substitute for wisdom." }
+      },
+      {
+        id: "swo_13", suit: "Swords", rank: "Queen", name: "Queen of Swords", roman: "XIII",
+        keywords: ["Perceptive Intellect", "Clear Boundaries", "Independence", "Truth"],
+        upright: { meaning: "An astute sovereign on a throne etched with cherubs and butterflies. Clear sight, impartiality, and boundaries.", advice: "Communicate with crystal precision; uphold boundaries with calm, mature grace." },
+        reversed: { meaning: "Cold aloofness, bitterness, overly critical tongue, or emotional isolation.", advice: "Soften intellectual severity with a touch of tender empathy." }
+      },
+      {
+        id: "swo_14", suit: "Swords", rank: "King", name: "King of Swords", roman: "XIV",
+        keywords: ["Intellectual Authority", "Impartial Truth", "Reason", "Ethical Law"],
+        upright: { meaning: "A master of law and objective reason holding the straight sword of justice. Impartial wisdom and mental power.", advice: "Rely upon objective facts and rigorous ethical standards to resolve disputes." },
+        reversed: { meaning: "Cruel intellectualism, manipulation, dogmatic tyranny, or cold logic without heart.", advice: "Ensure your wisdom honours human mercy; cold intellect devoid of heart corrupts." }
+      },
+
+      /* --- 14 SUIT OF PENTACLES (Earth, Body, Material, Wealth, Craft) --- */
+      {
+        id: "pen_1", suit: "Pentacles", rank: "Ace", name: "Ace of Pentacles", roman: "I",
+        keywords: ["Tangible Opportunity", "Abundance", "Prosperity", "Grounded Start"],
+        upright: { meaning: "A golden coin offered from a radiant cloud over a flowering garden. Solid financial and physical opportunity.", advice: "Plant this tangible seed with diligence; it promises robust, lasting fruit." },
+        reversed: { meaning: "Lost investment, missed financial chance, greed, or ungrounded planning.", advice: "Review financial foundations carefully before outlaying resources." }
+      },
+      {
+        id: "pen_2", suit: "Pentacles", rank: "Two", name: "Two of Pentacles", roman: "II",
+        keywords: ["Balance", "Adaptability", "Juggling Demands", "Fluidity"],
+        upright: { meaning: "Juggling two pentacles gracefully within an infinity loop as ships dance on the waves. High adaptability.", advice: "Stay fluid and maintain humour; flexibility keeps you upright amid shifting loads." },
+        reversed: { meaning: "Overwhelmed by multiple demands, dropped balls, financial disorganisation, or stress.", advice: "Simplify commitments; eliminate unnecessary obligations immediately." }
+      },
+      {
+        id: "pen_3", suit: "Pentacles", rank: "Three", name: "Three of Pentacles", roman: "III",
+        keywords: ["Mastery", "Collaboration", "Craftsmanship", "Teamwork"],
+        upright: { meaning: "The stonemason, architect, and monk conferring inside a soaring arch. Excellence through skilled collaboration.", advice: "Combine your talents with trusted peers; collective craftsmanship builds marvels." },
+        reversed: { meaning: "Ego clashes in team, poor craftsmanship, misaligned collaboration, or lack of appreciation.", advice: "Check communication protocols; respect everyone's unique contribution." }
+      },
+      {
+        id: "pen_4", suit: "Pentacles", rank: "Four", name: "Four of Pentacles", roman: "IV",
+        keywords: ["Conservation", "Security", "Holding Fast", "Scarcity Mindset"],
+        upright: { meaning: "Clutching four coins tightly to chest, crown, and feet. Financial stability gained through prudence.", advice: "Conserve resources wisely, but beware turning prudence into parsimonious fear." },
+        reversed: { meaning: "Reckless spending, releasing unhealthy material grip, or financial anxiety.", advice: "Allow currency to circulate naturally; hoarding breeds spiritual poverty." }
+      },
+      {
+        id: "pen_5", suit: "Pentacles", rank: "Five", name: "Five of Pentacles", roman: "V",
+        keywords: ["Hardship", "Exclusion", "Spiritual Poverty", "Available Sanctuary"],
+        upright: { meaning: "Trudging through snow past a glowing stained-glass sanctuary window. Hardship and feeling left in the cold.", advice: "Look up from misery; sanctuary and warm assistance are right beside you." },
+        reversed: { meaning: "End of financial poverty, recovery from illness, finding shelter, and renewed security.", advice: "Step inside the warm sanctuary; the harshest season is passing." }
+      },
+      {
+        id: "pen_6", suit: "Pentacles", rank: "Six", name: "Six of Pentacles", roman: "VI",
+        keywords: ["Generosity", "Reciprocity", "Charity", "Fair Sharing"],
+        upright: { meaning: "Holding balance scales whilst generously distributing alms. Fair flow of material resources and generosity.", advice: "Give generously if endowed; receive with graceful humility if in need." },
+        reversed: { meaning: "Strings-attached charity, debt, financial exploitation, or unequal power dynamic.", advice: "Ensure gifts do not compromise self-respect; pursue mutual autonomy." }
+      },
+      {
+        id: "pen_7", suit: "Pentacles", rank: "Seven", name: "Seven of Pentacles", roman: "VII",
+        keywords: ["Patience", "Long-Term Harvest", "Evaluation", "Cultivation"],
+        upright: { meaning: "Leaning upon a spade, evaluating healthy vines laden with growing pentacles. Patient long-term investment.", advice: "Trust the slow work of time; do not harvest the fruit before its proper season." },
+        reversed: { meaning: "Impatience, poor returns, wasted effort, or doubting long-term viability.", advice: "Assess if this soil is genuinely fruitful before investing further labour." }
+      },
+      {
+        id: "pen_8", suit: "Pentacles", rank: "Eight", name: "Eight of Pentacles", roman: "VIII",
+        keywords: ["Apprenticeship", "Diligence", "Refining Craft", "Dedication"],
+        upright: { meaning: "Engraving pentacles with meticulous care and unhurried devotion. Mastery through patient, devoted practice.", advice: "Dedicate yourself to your craft with humility; repetitive mastery breeds brilliance." },
+        reversed: { meaning: "Lack of focus, cutting corners, repetitive drudgery, or perfectionism paralysis.", advice: "Find joy in the process; avoid slipping into mindless mechanical labor." }
+      },
+      {
+        id: "pen_9", suit: "Pentacles", rank: "Nine", name: "Nine of Pentacles", roman: "IX",
+        keywords: ["Self-Sufficiency", "Luxury", "Graceful Independence", "Refinement"],
+        upright: { meaning: "Strolling through a lavish vineyard with a hooded falcon upon your wrist. Self-made security and refinement.", advice: "Enjoy the fruits of your disciplined toil with gracious, independent pride." },
+        reversed: { meaning: "Superficial status symbols, financial dependence, overworking, or loneliness.", advice: "Ensure material success does not isolate your heart from genuine fellowship." }
+      },
+      {
+        id: "pen_10", suit: "Pentacles", rank: "Ten", name: "Ten of Pentacles", roman: "X",
+        keywords: ["Ancestral Wealth", "Legacy", "Long-Term Security", "Lineage"],
+        upright: { meaning: "Generations gathered beneath an archway laden with coats of arms. Enduring wealth, legacy, and lineage.", advice: "Build for future generations; honour the heritage that paved your present foundation." },
+        reversed: { meaning: "Family inheritance disputes, financial loss, crumbling tradition, or fragile wealth.", advice: "Resolve family financial frictions with transparent fairness and long-term vision." }
+      },
+      {
+        id: "pen_11", suit: "Pentacles", rank: "Page", name: "Page of Pentacles", roman: "XI",
+        keywords: ["Diligent Student", "Grounded Ambition", "Study", "Practical Curiosity"],
+        upright: { meaning: "A dedicated scholar gazing intently upon a shining pentacle. Eager to master practical skills and knowledge.", advice: "Apply yourself studiously to learning practical arts; cultivate disciplined habits." },
+        reversed: { meaning: "Procrastination, lack of follow-through, daydreaming without study, or bad grades.", advice: "Ground your ambitions in consistent, daily study; avoid hollow daydreaming." }
+      },
+      {
+        id: "pen_12", suit: "Pentacles", rank: "Knight", name: "Knight of Pentacles", roman: "XII",
+        keywords: ["Methodical Duty", "Reliability", "Endurance", "Unwavering Work"],
+        upright: { meaning: "A stalwart knight on a heavy workhorse overlooking ploughed fields. Utmost dependability and patient toil.", advice: "Methodically complete what you started; unflagging consistency yields victory." },
+        reversed: { meaning: "Stubborn stubbornness, boring monotony, laziness, or workaholic obsession.", advice: "Introduce flexibility into your routine; stability need not equal stagnation." }
+      },
+      {
+        id: "pen_13", suit: "Pentacles", rank: "Queen", name: "Queen of Pentacles", roman: "XIII",
+        keywords: ["Nurturing Abundance", "Practical Care", "Warm Hospitality", "Earth Mother"],
+        upright: { meaning: "A loving sovereign seated amid blooming roses and frolicking hares. Practical nurturance, comfort, and wisdom.", advice: "Tend to practical necessities with gentle warmth; nourish both body and spirit." },
+        reversed: { meaning: "Smothering materialism, domestic anxiety, neglecting health, or overwork.", advice: "Remember your physical body requires gentle care; rest amid nature." }
+      },
+      {
+        id: "pen_14", suit: "Pentacles", rank: "King", name: "King of Pentacles", roman: "XIV",
+        keywords: ["Material Mastery", "Abundant Provider", "Enterprise", "Security"],
+        upright: { meaning: "A majestic king crowned with vine leaves on a carved bull throne. Pinnacle of business acumen and prosperity.", advice: "Cultivate abundance with steady responsibility; build enterprises that shelter many." },
+        reversed: { meaning: "Greed, corruption, stubborn materialism, or judging worth purely by money.", advice: "Re-evaluate what constitutes true wealth; spirit outweighs coin." }
       }
     ];
 
     /* =====================================================================
-       2. AMBIENT AUDIO SYNTHESIS (Web Audio API - Celestial Chimes)
+       2. AMBIENT AUDIO SYNTHESIS (Web Audio API)
        ===================================================================== */
     let audioCtx = null;
     let soundEnabled = true;
@@ -735,53 +816,40 @@
       }
     }
 
-    function playCelestialChime(frequency = 528, type = 'sine') {
+    function playCelestialChime(frequency = 528) {
       if (!soundEnabled) return;
       try {
         initAudio();
         const now = audioCtx.currentTime;
-        
-        // Primary oscillator
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        
-        // Shimmer oscillator (subtle vibrato)
-        const lfo = audioCtx.createOscillator();
-        const lfoGain = audioCtx.createGain();
-        
-        lfo.frequency.value = 4.5;
-        lfoGain.gain.value = 6;
-        lfo.connect(osc.frequency);
-        lfo.start(now);
-        
-        osc.type = type;
+
+        osc.type = 'sine';
         osc.frequency.setValueAtTime(frequency, now);
-        
+
         gain.gain.setValueAtTime(0, now);
-        gain.gain.linearRampToValueAtTime(0.2, now + 0.05);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 2.4);
-        
+        gain.gain.linearRampToValueAtTime(0.18, now + 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 2.2);
+
         osc.connect(gain);
         gain.connect(audioCtx.destination);
-        
+
         osc.start(now);
-        osc.stop(now + 2.5);
-        lfo.stop(now + 2.5);
+        osc.stop(now + 2.3);
       } catch (e) {
-        // Audio error fail silently
+        // audio fail silent
       }
     }
 
-    function playSpreadChimes() {
+    function playShuffleSound() {
       if (!soundEnabled) return;
-      const notes = [440, 554.37, 659.25, 880];
-      notes.forEach((freq, idx) => {
-        setTimeout(() => playCelestialChime(freq, 'triangle'), idx * 160);
+      [440, 523.25, 659.25, 783.99].forEach((freq, idx) => {
+        setTimeout(() => playCelestialChime(freq), idx * 120);
       });
     }
 
     /* =====================================================================
-       3. BACKGROUND STARFIELD ANIMATION
+       3. BACKGROUND CANVAS STARFIELD
        ===================================================================== */
     const canvas = document.getElementById('stars-canvas');
     const ctx = canvas.getContext('2d');
@@ -800,10 +868,10 @@
         stars.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          radius: Math.random() * 1.5 + 0.4,
+          radius: Math.random() * 1.4 + 0.4,
           alpha: Math.random() * 0.8 + 0.2,
-          speed: Math.random() * 0.015 + 0.005,
-          color: Math.random() > 0.3 ? '#f7e089' : '#ffffff'
+          speed: Math.random() * 0.015 + 0.004,
+          color: Math.random() > 0.35 ? '#fae69e' : '#ffffff'
         });
       }
     }
@@ -812,14 +880,12 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       stars.forEach(s => {
         s.alpha += s.speed;
-        if (s.alpha > 0.95 || s.alpha < 0.15) {
-          s.speed = -s.speed;
-        }
+        if (s.alpha > 0.95 || s.alpha < 0.15) s.speed = -s.speed;
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
         ctx.fillStyle = s.color;
         ctx.globalAlpha = Math.max(0, Math.min(1, s.alpha));
-        ctx.shadowBlur = 4;
+        ctx.shadowBlur = 3;
         ctx.shadowColor = s.color;
         ctx.fill();
       });
@@ -832,41 +898,45 @@
     drawStars();
 
     /* =====================================================================
-       4. APPLICATION STATE & SPREAD LOGIC
+       4. APPLICATION ENGINE & SPREAD LOGIC
        ===================================================================== */
-    let currentMode = 'single'; // 'single' or 'three'
-    let drawnCards = [];        // [{ cardData, isReversed, isFlipped, positionLabel }]
-    let savedReadings = [];
+    let currentMode = 'three'; // default to 3-Card spread
+    let currentDeckScope = 'full'; // 'full' (78) or 'major' (22)
+    let drawnCards = [];
 
-    // Local Storage Hydration
-    try {
-      savedReadings = JSON.parse(localStorage.getItem('arcana_readings_history') || '[]');
-    } catch (e) {
-      savedReadings = [];
-    }
-
-    function updateJournalBadge() {
-      document.getElementById('journal-count').innerText = savedReadings.length;
-    }
-    updateJournalBadge();
-
-    // Fisher-Yates Shuffle
-    function getShuffledDeck() {
-      const deck = [...TAROT_DECK];
-      for (let i = deck.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [deck[i], deck[j]] = [deck[j], deck[i]];
+    function getActivePool() {
+      if (currentDeckScope === 'major') {
+        return FULL_TAROT_DECK.filter(c => c.suit === 'Major');
       }
-      return deck;
+      return FULL_TAROT_DECK;
+    }
+
+    function shuffleDeck(deck) {
+      const copy = [...deck];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function getSuitSvg(suit) {
+      const key = suit.toLowerCase();
+      return SUIT_SVG[key] || SUIT_SVG.major;
     }
 
     function drawCards() {
+      const container = document.getElementById('cards-container');
+      container.classList.add('shuffling-animation');
+      setTimeout(() => container.classList.remove('shuffling-animation'), 650);
+
+      const pool = getActivePool();
+      const shuffled = shuffleDeck(pool);
       const allowReversals = document.getElementById('allow-reversals').checked;
-      const shuffled = getShuffledDeck();
       const count = currentMode === 'single' ? 1 : 3;
 
-      const positions = currentMode === 'single' 
-        ? ["Today's Guidance"] 
+      const positions = currentMode === 'single'
+        ? ["Today's Oracle"]
         : ["The Past (Foundation)", "The Present (Current Energy)", "The Future (Trajectory)"];
 
       drawnCards = [];
@@ -881,103 +951,109 @@
         });
       }
 
-      playSpreadChimes();
+      playShuffleSound();
       renderCards();
-      updateInterpretationPanel();
-
-      // UI state updates
-      document.getElementById('save-reading-btn').disabled = true;
-      document.getElementById('save-reading-btn').classList.add('opacity-50', 'cursor-not-allowed');
-      document.getElementById('interaction-hint').classList.remove('opacity-0');
+      updateInterpretationSection();
     }
 
     /* =====================================================================
-       5. CARD RENDERING & FLIP ANIMATIONS
+       5. CARD RENDERING (Strict Sizing, Dedicated Cell Stage)
        ===================================================================== */
     function renderCards() {
       const container = document.getElementById('cards-container');
       container.innerHTML = '';
 
       drawnCards.forEach((item, index) => {
-        const cardWrapper = document.createElement('div');
-        cardWrapper.className = 'flex flex-col items-center';
+        // Outer wrapper with dedicated position banner
+        const wrapper = document.createElement('div');
+        wrapper.className = 'flex flex-col items-center';
 
-        // Position Label
         const label = document.createElement('span');
-        label.className = 'font-cinzel text-xs uppercase tracking-widest text-amber-300/80 mb-3 font-semibold';
+        label.className = 'font-cinzel text-xs uppercase tracking-widest text-amber-300/80 mb-3 font-semibold select-none';
         label.textContent = item.positionLabel;
-        cardWrapper.appendChild(label);
+        wrapper.appendChild(label);
 
-        // Card Container with 3D perspective
-        const cardOuter = document.createElement('div');
-        cardOuter.className = 'w-56 h-88 sm:w-64 sm:h-[400px] perspective-1000 relative select-none';
+        // Dedicated cell with strictly enforced 3D perspective bounds
+        const cell = document.createElement('div');
+        cell.className = 'card-cell';
+        cell.id = `card-cell-${index}`;
 
         const cardInner = document.createElement('div');
         cardInner.className = `card-inner ${item.isFlipped ? 'card-flipped' : ''}`;
         cardInner.id = `card-inner-${index}`;
 
-        // FRONT (REVEALED)
+        const suitKey = item.card.suit.toLowerCase();
+        const symbolSvg = getSuitSvg(item.card.suit);
+
+        // REVEALED FRONT FACE (Physically inverted via card-front-reversed if reversed)
         const front = document.createElement('div');
-        front.className = `card-face card-front p-4 flex flex-col justify-between items-center text-amber-100 ${item.isReversed ? 'card-reversed' : ''}`;
+        front.className = `card-face card-front ${item.isReversed ? 'card-front-reversed' : ''} p-4 flex flex-col justify-between items-center text-amber-100 select-none`;
         
         front.innerHTML = `
-          <!-- Card Header -->
+          <!-- Header: Rank & Status Tag -->
           <div class="w-full flex items-center justify-between border-b border-amber-500/30 pb-2 px-1">
             <span class="font-cinzel text-sm text-amber-300 font-bold">${item.card.roman}</span>
-            <span class="font-sans-ui text-[10px] tracking-wider uppercase px-2 py-0.5 rounded-full ${item.isReversed ? 'bg-rose-900/50 text-rose-300 border border-rose-500/30' : 'bg-emerald-950/60 text-emerald-300 border border-emerald-500/30'}">
+            <span class="font-sans-ui text-[10px] tracking-wider uppercase px-2 py-0.5 rounded-full ${item.isReversed ? 'bg-rose-950/90 text-rose-300 border border-rose-500/50 shadow-[0_0_8px_rgba(244,63,94,0.3)]' : 'bg-emerald-950/80 text-emerald-300 border border-emerald-500/40'}">
               ${item.isReversed ? 'Reversed ↺' : 'Upright ✦'}
             </span>
           </div>
 
-          <!-- Celestial Illustration Core -->
-          <div class="my-auto flex flex-col items-center justify-center p-3 relative w-full">
-            <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full border border-amber-400/40 flex items-center justify-center bg-amber-500/5 shadow-[0_0_25px_rgba(212,175,55,0.18)] mb-3 card-symbol-container transition-transform duration-700">
-              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="text-amber-300">
-                ${item.card.symbolSvg}
+          <!-- Symbolic Emblem & Artwork -->
+          <div class="my-auto flex flex-col items-center justify-center p-2 relative w-full">
+            <div class="w-20 h-20 rounded-full border border-amber-400/40 flex items-center justify-center bg-amber-500/5 shadow-[0_0_20px_rgba(212,175,55,0.2)] mb-3">
+              <svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="text-amber-300">
+                ${symbolSvg}
               </svg>
             </div>
-            <h3 class="font-cinzel text-base sm:text-lg text-amber-100 font-bold tracking-wide">${item.card.name}</h3>
-            <span class="text-[11px] font-sans-ui text-amber-200/70 italic mt-0.5">${item.card.keywords.slice(0, 3).join(' • ')}</span>
+            <h3 class="font-cinzel text-base sm:text-lg text-amber-100 font-bold tracking-wide text-center leading-tight">${item.card.name}</h3>
+            <span class="text-[11px] font-sans-ui text-amber-200/70 italic mt-1 text-center">${item.card.keywords.slice(0, 3).join(' • ')}</span>
           </div>
 
-          <!-- Card Base -->
-          <div class="w-full border-t border-amber-500/30 pt-2 text-center">
-            <span class="font-decorative text-xs tracking-widest text-amber-300/80">MAJOR ARCANA</span>
+          <!-- Base: Suit Label & Inverted Indicator -->
+          <div class="w-full border-t border-amber-500/30 pt-2 flex items-center justify-between text-[11px] font-decorative text-amber-300/80 uppercase">
+            <span>${item.card.suit === 'Major' ? 'Major Arcana' : `Suit of ${item.card.suit}`}</span>
+            ${item.isReversed ? '<span class="text-[9px] font-sans-ui text-rose-300/90 lowercase tracking-tight italic">[inverted energy]</span>' : ''}
           </div>
         `;
 
-        // BACK (CONCEALED)
+        // CONCEALED BACK FACE (Always faces upright while covered)
         const back = document.createElement('div');
-        back.className = 'card-face card-back p-4 flex flex-col items-center justify-center relative overflow-hidden';
+        back.className = 'card-face card-back p-4 flex flex-col items-center justify-center relative select-none';
         
         back.innerHTML = `
-          <!-- Ornate Celestial Back Pattern -->
           <div class="absolute inset-2 border border-amber-500/30 rounded-xl flex items-center justify-center pointer-events-none">
             <div class="absolute inset-2 border border-dashed border-amber-400/20 rounded-lg"></div>
           </div>
           
-          <div class="w-24 h-24 rounded-full border-2 border-amber-400/40 flex items-center justify-center bg-amber-950/20 relative shadow-[0_0_20px_rgba(212,175,55,0.25)]">
-            <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" class="text-amber-300 animate-pulse-subtle">
+          <div class="w-20 h-20 rounded-full border-2 border-amber-400/40 flex items-center justify-center bg-amber-950/20 relative shadow-[0_0_20px_rgba(212,175,55,0.25)]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" class="text-amber-300">
               <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
             </svg>
             <div class="absolute -top-3 text-[10px] text-amber-300 font-cinzel">✦</div>
             <div class="absolute -bottom-3 text-[10px] text-amber-300 font-cinzel">✦</div>
           </div>
 
-          <p class="font-cinzel text-xs text-amber-200/70 tracking-widest mt-6 uppercase">Tap to Reveal</p>
+          <p class="font-cinzel text-xs text-amber-200/70 tracking-widest mt-6 uppercase">Tap to Unveil</p>
         `;
 
         cardInner.appendChild(back);
         cardInner.appendChild(front);
 
-        // Click to flip handler
-        cardOuter.addEventListener('click', () => {
+        cell.addEventListener('click', () => {
           flipCard(index);
         });
 
-        cardOuter.appendChild(cardInner);
-        cardWrapper.appendChild(cardOuter);
-        container.appendChild(cardWrapper);
+        cell.appendChild(cardInner);
+        wrapper.appendChild(cell);
+
+        // Persistent bottom badge indicating inverted state once flipped
+        const stateBadge = document.createElement('div');
+        stateBadge.id = `card-badge-${index}`;
+        stateBadge.className = `mt-3 text-xs font-sans-ui font-medium px-3 py-1 rounded-full border transition-all duration-500 ${item.isFlipped ? 'opacity-100' : 'opacity-0'} ${item.isReversed ? 'bg-rose-950/60 border-rose-500/40 text-rose-300' : 'bg-emerald-950/60 border-emerald-500/40 text-emerald-300'}`;
+        stateBadge.innerHTML = item.isReversed ? '<span>↺ Upside Down (Inverted Energy)</span>' : '<span>✦ Upright Orientation</span>';
+        wrapper.appendChild(stateBadge);
+
+        container.appendChild(wrapper);
       });
 
       lucide.createIcons();
@@ -988,54 +1064,45 @@
 
       drawnCards[index].isFlipped = true;
       const inner = document.getElementById(`card-inner-${index}`);
-      if (inner) {
-        inner.classList.add('card-flipped');
-      }
+      const cell = document.getElementById(`card-cell-${index}`);
+      const badge = document.getElementById(`card-badge-${index}`);
 
-      playCelestialChime(587.33 + (index * 75), 'sine');
-      checkAllRevealedState();
-      updateInterpretationPanel();
+      if (inner) inner.classList.add('card-flipped');
+      if (cell) cell.classList.add('is-revealed');
+      if (badge) badge.classList.remove('opacity-0');
+
+      playCelestialChime(587.33 + (index * 80));
+      updateInterpretationSection();
     }
 
     function revealAllCards() {
-      drawnCards.forEach((card, index) => {
-        if (!card.isFlipped) {
-          setTimeout(() => flipCard(index), index * 200);
+      drawnCards.forEach((c, idx) => {
+        if (!c.isFlipped) {
+          setTimeout(() => flipCard(idx), idx * 180);
         }
       });
     }
 
-    function checkAllRevealedState() {
-      const allRevealed = drawnCards.length > 0 && drawnCards.every(c => c.isFlipped);
-      const saveBtn = document.getElementById('save-reading-btn');
-      
-      if (allRevealed) {
-        saveBtn.disabled = false;
-        saveBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-        document.getElementById('interaction-hint').classList.add('opacity-0');
-      }
-    }
-
     /* =====================================================================
-       6. INTERPRETATION & ORACLE SYNTHESIS ENGINE
+       6. INTERPRETATION & ORACLE SYNTHESIS
        ===================================================================== */
-    function updateInterpretationPanel() {
-      const panel = document.getElementById('interpretation-panel');
+    function updateInterpretationSection() {
+      const section = document.getElementById('interpretation-section');
       const breakdowns = document.getElementById('card-breakdowns');
       const synthesisText = document.getElementById('synthesis-text');
-      const dateBadge = document.getElementById('reading-date-badge');
+      const deckIndicator = document.getElementById('deck-mode-indicator');
 
       const flippedCards = drawnCards.filter(c => c.isFlipped);
 
       if (flippedCards.length === 0) {
-        panel.classList.add('hidden');
+        section.classList.add('hidden');
         return;
       }
 
-      panel.classList.remove('hidden');
-      dateBadge.textContent = new Date().toLocaleDateString('en-GB', {
-        weekday: 'short', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit'
-      });
+      section.classList.remove('hidden');
+      deckIndicator.textContent = currentDeckScope === 'full' 
+        ? "Deck: Full 78 Cards (Major & Minor Arcana)" 
+        : "Deck: Major Arcana Only (22 Cards)";
 
       breakdowns.innerHTML = '';
 
@@ -1043,29 +1110,30 @@
         const state = item.isReversed ? item.card.reversed : item.card.upright;
         const statusLabel = item.isReversed ? 'Reversed' : 'Upright';
         const cardBox = document.createElement('div');
-        cardBox.className = 'p-5 sm:p-6 rounded-2xl bg-black/40 border border-amber-500/20 shadow-md';
+        cardBox.className = 'p-5 sm:p-6 rounded-2xl bg-black/45 border border-amber-500/20 shadow-lg';
 
         cardBox.innerHTML = `
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-amber-500/20 pb-3 mb-4">
             <div>
-              <span class="text-xs font-sans-ui text-amber-400/90 font-medium tracking-wide uppercase">${item.positionLabel}</span>
+              <span class="text-xs font-sans-ui text-amber-400 font-semibold tracking-wide uppercase">${item.positionLabel}</span>
               <h4 class="font-cinzel text-xl text-amber-100 font-bold mt-0.5">
-                ${item.card.roman}. ${item.card.name} 
-                <span class="text-xs font-sans-ui font-normal ml-2 ${item.isReversed ? 'text-rose-300' : 'text-emerald-300'}">(${statusLabel})</span>
+                ${item.card.name} 
+                <span class="text-xs font-sans-ui font-medium ml-2 ${item.isReversed ? 'text-rose-300' : 'text-emerald-300'}">(${statusLabel})</span>
               </h4>
             </div>
-            <div class="flex flex-wrap gap-1.5 font-sans-ui text-[11px] text-amber-200/60">
-              ${item.card.keywords.map(kw => `<span class="bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">${kw}</span>`).join('')}
+            <div class="flex flex-wrap gap-1.5 font-sans-ui text-[11px] text-amber-200/70">
+              <span class="bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 uppercase font-semibold text-amber-300">${item.card.suit}</span>
+              ${item.card.keywords.map(kw => `<span class="bg-black/40 px-2 py-0.5 rounded border border-amber-500/10">${kw}</span>`).join('')}
             </div>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm sm:text-base">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-sm sm:text-base">
             <div>
-              <h5 class="font-cinzel text-xs text-amber-300 font-bold uppercase tracking-wider mb-1">Divine Meaning</h5>
+              <h5 class="font-cinzel text-xs text-amber-300 font-bold uppercase tracking-wider mb-1.5">Divine Meaning</h5>
               <p class="text-slate-300 leading-relaxed font-normal">${state.meaning}</p>
             </div>
-            <div class="border-t md:border-t-0 md:border-l border-amber-500/20 pt-3 md:pt-0 md:pl-4">
-              <h5 class="font-cinzel text-xs text-amber-300 font-bold uppercase tracking-wider mb-1">Oracle Guidance & Action</h5>
+            <div class="border-t md:border-t-0 md:border-l border-amber-500/20 pt-3 md:pt-0 md:pl-5">
+              <h5 class="font-cinzel text-xs text-amber-300 font-bold uppercase tracking-wider mb-1.5">Oracle Guidance & Action</h5>
               <p class="text-amber-100/90 leading-relaxed font-normal italic">${state.advice}</p>
             </div>
           </div>
@@ -1073,20 +1141,20 @@
         breakdowns.appendChild(cardBox);
       });
 
-      // Compute Spread Synthesis
+      // Oracle Synthesis
       if (currentMode === 'single') {
         const item = drawnCards[0];
         const state = item.isReversed ? item.card.reversed : item.card.upright;
-        synthesisText.textContent = `Today's focal meditation centres on ${item.card.name} in its ${item.isReversed ? 'reversed' : 'upright'} expression. ${state.advice} Carry the essence of "${item.card.keywords[0]}" in your reflections today.`;
+        synthesisText.textContent = `Today's meditation centres on ${item.card.name} (${item.isReversed ? 'Reversed' : 'Upright'}). ${state.advice} Hold the principle of "${item.card.keywords[0]}" firmly in mind throughout your endeavours today.`;
       } else {
         if (drawnCards.every(c => c.isFlipped)) {
           const past = drawnCards[0];
           const pres = drawnCards[1];
           const fut = drawnCards[2];
 
-          synthesisText.textContent = `Your narrative progresses from the foundations of ${past.card.name} (${past.isReversed ? 'Reversed' : 'Upright'}), moving into your present experience governed by ${pres.card.name} (${pres.isReversed ? 'Reversed' : 'Upright'}), and crystallising toward ${fut.card.name} (${fut.isReversed ? 'Reversed' : 'Upright'}). Reconcile past lessons with honesty to step boldly into the wisdom awaiting in your horizon.`;
+          synthesisText.textContent = `Your path originates within the themes of ${past.card.name} (${past.isReversed ? 'Reversed' : 'Upright'}), grounding your present situation under the sway of ${pres.card.name} (${pres.isReversed ? 'Reversed' : 'Upright'}), and calling you to prepare for ${fut.card.name} (${fut.isReversed ? 'Reversed' : 'Upright'}). Harmonise these energies with patient reflection and purposeful action.`;
         } else {
-          synthesisText.textContent = `Reveal all three cards to unlock the integrated synthesis connecting your past foundation, present moment, and future trajectory.`;
+          synthesisText.textContent = `Reveal all three cards to unlock the integrated synthesis connecting your past foundation, present moment, and future horizon.`;
         }
       }
 
@@ -1094,122 +1162,11 @@
     }
 
     /* =====================================================================
-       7. JOURNALING / LOCAL STORAGE REPOSITORY
+       7. EVENT CONTROLS & INITIALISATION
        ===================================================================== */
-    function showToast(msg) {
-      const toast = document.getElementById('toast');
-      document.getElementById('toast-message').textContent = msg;
-      toast.classList.remove('translate-y-20', 'opacity-0');
-      toast.classList.add('translate-y-0', 'opacity-100');
-
-      setTimeout(() => {
-        toast.classList.add('translate-y-20', 'opacity-0');
-        toast.classList.remove('translate-y-0', 'opacity-100');
-      }, 3200);
-    }
-
-    function saveCurrentReading() {
-      if (drawnCards.length === 0 || !drawnCards.every(c => c.isFlipped)) {
-        return;
-      }
-
-      const readingEntry = {
-        id: Date.now(),
-        date: new Date().toISOString(),
-        formattedDate: new Date().toLocaleDateString('en-GB', {
-          day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
-        }),
-        mode: currentMode === 'single' ? 'Single Card Guidance' : '3-Card Spread (Past / Present / Future)',
-        cards: drawnCards.map(d => ({
-          name: d.card.name,
-          roman: d.card.roman,
-          isReversed: d.isReversed,
-          position: d.positionLabel,
-          advice: d.isReversed ? d.card.reversed.advice : d.card.upright.advice
-        }))
-      };
-
-      savedReadings.unshift(readingEntry);
-      // Keep up to 25 entries
-      if (savedReadings.length > 25) savedReadings.pop();
-
-      try {
-        localStorage.setItem('arcana_readings_history', JSON.stringify(savedReadings));
-      } catch (e) {
-        // storage overflow
-      }
-
-      updateJournalBadge();
-      showToast('Reading inscribed into your divination journal.');
-      playCelestialChime(880, 'sine');
-    }
-
-    function renderJournalList() {
-      const list = document.getElementById('journal-list');
-      list.innerHTML = '';
-
-      if (savedReadings.length === 0) {
-        list.innerHTML = `
-          <div class="text-center py-12 text-amber-200/50 font-sans-ui">
-            <i data-lucide="book-dashed" class="w-10 h-10 mx-auto mb-2 text-amber-500/40"></i>
-            <p>Your journal is currently blank.</p>
-            <p class="text-xs mt-1">Complete and reveal a reading to preserve its divine wisdom here.</p>
-          </div>
-        `;
-        lucide.createIcons();
-        return;
-      }
-
-      savedReadings.forEach((entry, idx) => {
-        const item = document.createElement('div');
-        item.className = 'p-4 rounded-xl bg-black/40 border border-amber-500/20 font-sans-ui text-sm flex flex-col gap-2 relative';
-        
-        item.innerHTML = `
-          <div class="flex items-center justify-between border-b border-amber-500/10 pb-2">
-            <div>
-              <span class="text-xs font-cinzel text-amber-300 font-bold uppercase tracking-wider">${entry.mode}</span>
-              <span class="text-xs text-amber-200/50 block">${entry.formattedDate}</span>
-            </div>
-            <button class="delete-entry-btn text-rose-300/60 hover:text-rose-200 p-1" data-id="${entry.id}" title="Remove entry">
-              <i data-lucide="trash-2" class="w-4 h-4"></i>
-            </button>
-          </div>
-          <div class="space-y-1.5 mt-1">
-            ${entry.cards.map(c => `
-              <div class="flex flex-col sm:flex-row sm:items-baseline justify-between text-xs gap-1">
-                <span class="text-amber-100 font-medium">
-                  <strong>${c.position}:</strong> ${c.roman}. ${c.name} 
-                  <span class="${c.isReversed ? 'text-rose-300' : 'text-emerald-300'}">(${c.isReversed ? 'Rev' : 'Upright'})</span>
-                </span>
-                <span class="text-amber-200/60 italic text-[11px] truncate max-w-xs">${c.advice}</span>
-              </div>
-            `).join('')}
-          </div>
-        `;
-
-        list.appendChild(item);
-      });
-
-      // Attach Delete listeners
-      list.querySelectorAll('.delete-entry-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const id = Number(e.currentTarget.getAttribute('data-id'));
-          savedReadings = savedReadings.filter(r => r.id !== id);
-          localStorage.setItem('arcana_readings_history', JSON.stringify(savedReadings));
-          updateJournalBadge();
-          renderJournalList();
-        });
-      });
-
-      lucide.createIcons();
-    }
-
-    /* =====================================================================
-       8. EVENT LISTENERS & INITIALISATION
-       ===================================================================== */
-    // Mode toggles
     const modeSingleBtn = document.getElementById('mode-single-btn');
     const modeThreeBtn = document.getElementById('mode-three-btn');
+    const deckScopeSelect = document.getElementById('deck-scope-select');
 
     modeSingleBtn.addEventListener('click', () => {
       if (currentMode === 'single') return;
@@ -1227,7 +1184,11 @@
       drawCards();
     });
 
-    // Draw & Reveal controls
+    deckScopeSelect.addEventListener('change', (e) => {
+      currentDeckScope = e.target.value;
+      drawCards();
+    });
+
     document.getElementById('draw-cards-btn').addEventListener('click', () => {
       drawCards();
     });
@@ -1236,11 +1197,7 @@
       revealAllCards();
     });
 
-    document.getElementById('save-reading-btn').addEventListener('click', () => {
-      saveCurrentReading();
-    });
-
-    // Audio toggle
+    // Sound toggle
     const soundBtn = document.getElementById('sound-toggle-btn');
     const soundIcon = document.getElementById('sound-icon');
     soundBtn.addEventListener('click', () => {
@@ -1249,7 +1206,7 @@
         initAudio();
         soundIcon.setAttribute('data-lucide', 'volume-2');
         soundBtn.classList.remove('opacity-60');
-        playCelestialChime(660);
+        playCelestialChime(659.25);
       } else {
         soundIcon.setAttribute('data-lucide', 'volume-x');
         soundBtn.classList.add('opacity-60');
@@ -1257,32 +1214,6 @@
       lucide.createIcons();
     });
 
-    // Journal Modal
-    const journalModal = document.getElementById('journal-modal');
-    document.getElementById('open-journal-btn').addEventListener('click', () => {
-      renderJournalList();
-      journalModal.classList.remove('hidden');
-    });
-
-    const closeModal = () => journalModal.classList.add('hidden');
-    document.getElementById('close-journal-btn').addEventListener('click', closeModal);
-    document.getElementById('close-journal-footer-btn').addEventListener('click', closeModal);
-    
-    // Backdrop click close
-    journalModal.addEventListener('click', (e) => {
-      if (e.target === journalModal) closeModal();
-    });
-
-    document.getElementById('clear-journal-btn').addEventListener('click', () => {
-      if (savedReadings.length === 0) return;
-      savedReadings = [];
-      localStorage.removeItem('arcana_readings_history');
-      updateJournalBadge();
-      renderJournalList();
-      showToast('Journal history cleared.');
-    });
-
-    // Initial setup on load
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
       drawCards();
