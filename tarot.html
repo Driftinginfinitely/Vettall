@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en-GB">
 <head>
   <meta charset="UTF-8">
@@ -178,9 +178,9 @@
         </div>
 
         <!-- Chime Sound Control -->
-        <button id="sound-toggle-btn" class="px-3.5 py-1.5 rounded-lg border border-amber-500/30 bg-indigo-950/40 text-amber-200 hover:border-amber-400 hover:bg-amber-500/10 transition flex items-center gap-2 font-sans-ui text-xs" title="Toggle Celestial Chimes">
-          <i data-lucide="volume-2" id="sound-icon" class="w-4 h-4 text-amber-300"></i>
-          <span class="tracking-wider uppercase font-medium">Chimes</span>
+        <button id="sound-toggle-btn" class="px-3.5 py-1.5 rounded-lg border border-amber-500/30 bg-indigo-950/40 text-amber-200/60 opacity-60 hover:border-amber-400 hover:bg-amber-500/10 transition flex items-center gap-2 font-sans-ui text-xs" title="Toggle Celestial Chimes">
+          <i data-lucide="volume-x" id="sound-icon" class="w-4 h-4 text-amber-300"></i>
+          <span id="sound-label" class="tracking-wider uppercase font-medium">Chimes: Muted</span>
         </button>
       </div>
     </header>
@@ -805,7 +805,7 @@
        2. AMBIENT AUDIO SYNTHESIS (Web Audio API)
        ===================================================================== */
     let audioCtx = null;
-    let soundEnabled = true;
+    let soundEnabled = false; // Muted by default
 
     function initAudio() {
       if (!audioCtx) {
@@ -1200,16 +1200,21 @@
     // Sound toggle
     const soundBtn = document.getElementById('sound-toggle-btn');
     const soundIcon = document.getElementById('sound-icon');
+    const soundLabel = document.getElementById('sound-label');
     soundBtn.addEventListener('click', () => {
       soundEnabled = !soundEnabled;
       if (soundEnabled) {
         initAudio();
         soundIcon.setAttribute('data-lucide', 'volume-2');
-        soundBtn.classList.remove('opacity-60');
+        soundLabel.textContent = 'Chimes: On';
+        soundBtn.classList.remove('opacity-60', 'text-amber-200/60');
+        soundBtn.classList.add('text-amber-200');
         playCelestialChime(659.25);
       } else {
         soundIcon.setAttribute('data-lucide', 'volume-x');
-        soundBtn.classList.add('opacity-60');
+        soundLabel.textContent = 'Chimes: Muted';
+        soundBtn.classList.add('opacity-60', 'text-amber-200/60');
+        soundBtn.classList.remove('text-amber-200');
       }
       lucide.createIcons();
     });
